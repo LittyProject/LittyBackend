@@ -1,6 +1,6 @@
 import * as z from 'zod';
 
-const channelSchema = z.object({
+export const channelSchema = z.object({
     id: z.string(),
     name: z.string().min(1).max(24),
     createdAt: z.date(),

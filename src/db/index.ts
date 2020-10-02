@@ -20,7 +20,6 @@ async function conn(): Promise<Connection> {
 
 const servers = r.table('servers');
 const users = r.table('users');
-const channels = r.table('channels');
 const messages = r.table('messages');
 const userAlive = r.table('checkUsers');
 
@@ -87,10 +86,6 @@ class DB {
         return toReturn;
     }
 
-    async getServerChannels(serverId: string): Promise<Channel[] | null> {
-        return await channels.filter({serverId}).run(await conn());
-    }
-
 
 
     
@@ -122,34 +117,6 @@ class DB {
     async updateServer(server: Server | {id: string}): Promise<void> {
         await servers.get(server.id).update(server).run(await conn());
     }
-
-
-
-    async insertChannel(channel: Channel): Promise<Channel> {
-        await channels.insert(channel).run(await conn());
-        return channel;
-    }
-
-    async getChannelCount(): Promise<number> {
-        return await channels.count().run(await conn());
-    }
-    
-    async getChannel(channelID: string): Promise<Channel | null> {
-        return await channels.get(channelID).run(await conn());
-    }
-
-    async getAllChannels(): Promise<Channel[]> {
-        return await channels.run(await conn());
-    }
-
-    async updateChannel(channel: Channel | {id: string}): Promise<void> {
-        await channels.get(channel.id).update(channel).run(await conn());
-    }
-    
-    async getChannelMessages(channelId: string): Promise<Message[] | null> {
-        return await messages.filter({channelId}).orderBy('createdAt').run(await conn());
-    }
-
 
 
 

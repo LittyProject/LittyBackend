@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import {channelSchema} from "./channels";
 
 const serverSchema = z.object({
     id: z.string(),
@@ -8,6 +9,7 @@ const serverSchema = z.object({
         id: z.string(),
         reason: z.string()
     })),
+    channels: channelSchema,
     ownerId: z.string(),
     createdAt: z.date()
 });
