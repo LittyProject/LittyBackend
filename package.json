@@ -1,0 +1,53 @@
+{
+  "name": "litty-backend",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^14.6.4",
+    "typescript": "^3.9.7"
+  },
+  "scripts": {
+    "tsc": "tsc --outDir ./build",
+    "start": "ts-node-dev --respawn --transpile-only ./src/index.ts",
+    "prod": "tsc --outDir ./build && node ./build/src/index.js"
+  },
+  "dependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/compression": "^1.7.0",
+    "@types/cookie-parser": "^1.4.2",
+    "@types/cookie-session": "^2.0.41",
+    "@types/cors": "^2.8.7",
+    "@types/dotenv": "^8.2.0",
+    "@types/express": "^4.17.7",
+    "@types/handlebars": "^4.1.0",
+    "@types/mime-types": "^2.1.0",
+    "@types/multer": "^1.4.4",
+    "@types/node-fetch": "^2.5.7",
+    "@types/raw-body": "^2.3.0",
+    "@types/sha1": "^1.1.2",
+    "bcrypt": "^5.0.0",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.5",
+    "cookie-session": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "handlebars": "^4.7.6",
+    "hcaptcha": "^0.0.2",
+    "http": "^0.0.1-security",
+    "method-override": "^3.0.0",
+    "moment": "^2.27.0",
+    "multer": "^1.4.2",
+    "node-fetch": "^2.6.0",
+    "raw-body": "^2.4.1",
+    "rethinkdb-ts": "^2.4.4",
+    "sha1": "^1.1.1",
+    "sharp": "^0.26.0",
+    "socket.io": "^2.3.0",
+    "uniqid": "^5.2.0",
+    "uuidv4": "^6.2.3",
+    "zod": "^1.10.1"
+  }
+}

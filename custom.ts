@@ -1,0 +1,14 @@
+import {User} from './src-idk/models/user';
+import { response } from "express";
+
+declare module 'express-serve-static-core' {
+
+    interface Request {
+        user?: User;
+        rawBody?: any;
+    }
+    interface Response {
+        success(data?: any): void;
+        error(data: any): void;
+    }
+}

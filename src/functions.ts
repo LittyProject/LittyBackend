@@ -1,0 +1,46 @@
+import bcrypt from 'bcrypt';
+var uniqid = require('uniqid');
+
+export function genID(): string{
+    return uniqid()
+}
+
+export async function compareHash(string: string, password: string): Promise<boolean> {
+    return new Promise<boolean>((res, rej) => {
+        bcrypt.compare(string, password, async function(err, result) {
+            if(err) rej(err);
+            else res(result);
+        });
+    });
+}
+
+export async function hashPassword(string: string): Promise<string> {
+    return new Promise<string>((res, rej) => {
+        bcrypt.genSalt(10, async function(err, salt) {
+            bcrypt.hash(string, salt, async function(err, hash) {
+                if(err) rej(err);
+                else res(hash);
+            });
+        });
+    })
+}
+
+export function createID(length: number) {
+    let result  = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
+export function createTag() {
+    let result  = '';
+    let characters = '0123456789ABCDEF';
+    let charactersLength = characters.length;
+    for (let i = 0; i < 4; i++) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
