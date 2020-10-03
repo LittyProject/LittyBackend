@@ -10,5 +10,6 @@ declare module 'express-serve-static-core' {
     interface Response {
         success(data?: any): void;
         error(data: any): void;
+        notFound(): void;
     }
 }

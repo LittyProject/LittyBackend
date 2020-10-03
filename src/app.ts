@@ -4,8 +4,6 @@ import db from './db';
 
 const methodOverride = require("method-override");
 
-const indexRoute = require("./routes");
-
 const app = express();
 
 const http = require("http");
@@ -22,15 +20,16 @@ app.use(express.urlencoded({extended: true}))
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(bodyParser.json())
-app.use("/", express.static('public'))
-app.set("view engine", "ejs")
 
 app.use("/", require("./routes/index"));  
 
 response.success = function(data) {
-    if(data)
-        this.json({data});
+    if(data) this.json({data});
     else this.json({message: "success"});
+}
+
+response.notFound = function() {
+    this.status(404).json({message: "not found"});
 }
 
 response.error = function(message) {
@@ -39,5 +38,5 @@ response.error = function(message) {
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-    console.log('Running on port '+PORT);
+    console.log('Litty is running on port: '+PORT);
 });

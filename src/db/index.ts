@@ -60,6 +60,18 @@ class DB {
         return arr.length > 0 ? arr[0] as User : null;
     }
 
+    async getUserByUsernameAndTag(username: string, tag: string): Promise<User | null> {
+        const arr = await users.filter({username, tag}).run(await conn());
+        if(arr.length > 0){
+            let isAlive = await this.isUserAlive(arr[0].id);
+            if(!isAlive) {
+                arr[0].status = "offline";
+                return arr[0] as User;
+            }
+        }
+        return arr.length > 0 ? arr[0] as User : null;
+    }
+
     async getUserCount(): Promise<number> {
         return await users.count().run(await conn());
     }
