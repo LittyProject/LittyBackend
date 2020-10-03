@@ -9,7 +9,7 @@ const http = require("http");
 const socketIO = require("socket.io");
 const server = http.createServer(app);
 const io = socketIO(server);
-require("./io/index")(io);
+//require("./io")(io);
 
 // EXPRESS SECTION
 app.use((req, res, next)=>{
