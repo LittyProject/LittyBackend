@@ -24,6 +24,18 @@ const messages = r.table('messages');
 const userAlive = r.table('checkUsers');
 
 class DB {
+    async conn(): Promise<Connection> {
+        if (_conn == null) {
+            _conn = await r.connect({
+                host: process.env.DB_HOST,
+                user: process.env.DB_USER,
+                password: process.env.DB_PASSWORD,
+                db: process.env.DB_DATABASE
+            });
+        }
+        return _conn;
+    }
+
     async getUser(id: string): Promise<User | null> {
         const u = await users.get(id).run(await conn());
         if(u){

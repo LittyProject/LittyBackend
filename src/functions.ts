@@ -1,8 +1,9 @@
 import bcrypt from 'bcrypt';
-var uniqid = require('uniqid');
+import { number } from 'zod';
+let uniqid = require('uniqid');
 
 export function genID(): string{
-    return uniqid()
+    return uniqid();
 }
 
 export async function compareHash(string: string, password: string): Promise<boolean> {
@@ -43,4 +44,15 @@ export function createTag() {
        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+}
+
+// await f.getOnly(user, "id avatarURL bot");
+export async function getOnly(model: any, whatToGet: string){
+    if(whatToGet == "" || model == {}) return {};
+    let keys = await whatToGet.split(" ");
+    let toReturn: any = {};
+    for(let num in keys){
+        toReturn[keys[num]] = model[keys[num]];
+    }
+    return await toReturn;
 }

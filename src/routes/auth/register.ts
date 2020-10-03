@@ -1,5 +1,4 @@
 import express from 'express';
-const router = express.Router();
 import { userRegisterSchema, User } from "../../models/user";
 import db from "../../db";
 import * as f from '../../functions';
@@ -16,12 +15,12 @@ export default async function(req: express.Request, res: express.Response) {
         };
         let credentials = userRegisterSchema.parse(model);
 
-        /*try {
+        try {
             const data = await verify(process.env.HCAPTCHA_SECRET || '', credentials.hcaptcha);
             if(!data.success) throw 'captcha failed';
         } catch(err) {
             throw 'captcha failed';
-        }*/
+        }
 
         let check = await db.getUserByEmail(credentials.email);
         if(check) {

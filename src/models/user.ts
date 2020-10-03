@@ -1,7 +1,7 @@
 import * as z from 'zod';
 import db from '../db';
 
-const userSchema = z.object({
+export const userSchema = z.object({
     id: z.string(),
     username: z.string().min(3, {message: "Must be 3 or more characters long"}).max(24, {message: "Must be 24 or fewer characters long"}),
     avatarURL: z.string().url({message: "Must contains web URL"}),

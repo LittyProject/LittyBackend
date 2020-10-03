@@ -1,5 +1,4 @@
 import express from 'express';
-const router = express.Router();
 import { userLoginSchema } from "../../models/user";
 import db from "../../db";
 import * as f from "../../functions";
