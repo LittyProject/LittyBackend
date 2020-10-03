@@ -2,7 +2,6 @@ import { r, Connection } from 'rethinkdb-ts';
 
 import {Server} from '../models/server';
 import {User} from '../models/user';
-import {Channel} from '../models/channels';
 import {Message} from '../models/messages';
 
 let _conn: Connection | null = null;

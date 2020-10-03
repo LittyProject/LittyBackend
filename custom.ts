@@ -4,7 +4,7 @@ import { response } from "express";
 declare module 'express-serve-static-core' {
 
     interface Request {
-        user: User | null;
+        user?: User;
         rawBody?: any;
     }
     interface Response {

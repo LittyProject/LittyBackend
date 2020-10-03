@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
-import { number } from 'zod';
-let uniqid = require('uniqid');
+const uniqid = require('uniqid');
 
 export function genID(): string{
     return uniqid();
@@ -54,5 +53,5 @@ export async function getOnly(model: any, whatToGet: string){
     for(let num in keys){
         toReturn[keys[num]] = model[keys[num]];
     }
-    return await toReturn;
+    return toReturn;
 }

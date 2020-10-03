@@ -39,7 +39,7 @@ response.notFound = function() {
 }
 
 response.notAuthorized = function() {
-    this.status(401).json({message: "not authorized"});
+    this.status(401).json({message: "unauthorized"});
 }
 
 response.error = function(message) {
