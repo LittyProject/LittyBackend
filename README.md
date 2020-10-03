@@ -50,6 +50,17 @@ npm run start
 yarn run start
 ```
 
+## API
+
+| Method \| Path | Required Auth | Example body |
+|:-:|:-:|:-:|
+| POST \| `/auth/login` | no | `{"username": string, "password": string}` |
+| POST \| `/auth/register` | no | `{"username": string, "password": string, "confirmPassword": string, "email": string, "hcaptcha": string}` |
+| GET \| `/users/:id` | yes |  |
+| GET \| `/servers/:id` | yes |  |
+| POST \| `/servers` | yes | `{"name": string}` |
+| POST \| `/servers/:id/join` | yes | `{}` |
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
