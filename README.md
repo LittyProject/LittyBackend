@@ -1,6 +1,6 @@
 # Litty
 
-Litty is a open source web chat app writen in TypeScript.
+Litty is as open source web chat app written in TypeScript.
 
 ## Requirements
 
@@ -24,7 +24,7 @@ yarn
 
 ## How to run
 
-Before run you **must** create .env file in main directory, and complete it by editing this example:
+Before run, you **must** create .env file in main directory, and complete it by editing this example:
 
 ```
 PORT=1920
