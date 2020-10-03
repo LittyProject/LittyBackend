@@ -53,7 +53,7 @@ yarn run start
 ## API
 
 | Method \| Path | Required Auth | Example body | Ratelimit (req/time) |
-|:-:|:-:|:-:|
+|:-:|:-:|:-:|:-:|
 | POST \| `/auth/login` | no | `{"username": string, "password": string}` |  |
 | POST \| `/auth/register` | no | `{"username": string, "password": string, "confirmPassword": string, "email": string, "hcaptcha": string}` |  |
 | GET \| `/users/:id` | yes |  | 100/20s |
