@@ -57,7 +57,7 @@ yarn run start
 | POST \| `/auth/login` | no | `{"username": string, "password": string}` |  |
 | POST \| `/auth/register` | no | `{"username": string, "password": string, "confirmPassword": string, "email": string, "hcaptcha": string}` |  |
 | GET \| `/users/:id` | yes |  | 100/20s |
-| GET \| `/servers/:id` | yes | 100/20s | 
+| GET \| `/servers/:id` | yes |  | 100/20s | 
 | POST \| `/servers` | yes | `{"name": string}` | 5/3m |
 | POST \| `/servers/:id/join` | yes | `{}` | 30/3m |
 | DELETE \| `/servers/:id/leave` | yes |  | 30/3m |
