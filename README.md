@@ -60,6 +60,7 @@ yarn run start
 | GET \| `/servers/:id` | yes | 100/20s | 
 | POST \| `/servers` | yes | `{"name": string}` | 5/3m |
 | POST \| `/servers/:id/join` | yes | `{}` | 30/3m |
+| DELETE \| `/servers/:id/leave` | yes |  | 30/3m |
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

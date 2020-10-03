@@ -6,9 +6,9 @@ export default function rateLimits(seconds: number, maxRequests: number) {
     return async function(req: express.Request, res: express.Response, next: express.NextFunction) {
         const user = req.user;
         if(!user) return next();
-        const c = cache[user.id];
+        const c = cache[user.id+req.path];
         if(!c) {
-            cache[user.id] = {lastRequest: new Date(), requestCount: 1};
+            cache[user.id+req.path] = {lastRequest: new Date(), requestCount: 1};
             return next();
         }
 
