@@ -1,10 +1,5 @@
 import express from 'express';
 
-async function render(req: express.Request, res: express.Response, path: string, title: string, data: any = {}){
-    const universal = {user: req.user, server: null, channel: null, title: title};
-    res.render(path, Object.assign(universal, data));
-}
-
 export default function rateLimits(seconds: number, maxRequests: number) {
     const cache: {[id: string]: {lastRequest: Date, requestCount: number}} = {};
 
@@ -21,7 +16,7 @@ export default function rateLimits(seconds: number, maxRequests: number) {
             const end = new Date(c.lastRequest.getTime());
             end.setSeconds(end.getSeconds() + seconds);
             if (new Date() < end) {
-                await render(req, res, "errors/ratelimited", "error", {});
+                res.status(419).json({message: "ratelimited"});
             } else {
                 c.requestCount = 0;
                 c.lastRequest = new Date();

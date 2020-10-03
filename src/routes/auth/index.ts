@@ -1,4 +1,5 @@
 import express from 'express';
+import rateLimits from '../../middlewares/rateLimits';
 const router = express.Router();
 
 import login from './login';
