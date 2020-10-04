@@ -12,5 +12,6 @@ declare module 'express-serve-static-core' {
         error(data: any): void;
         notFound(): void;
         notAuthorized(): void;
+        banned(): void;
     }
 }

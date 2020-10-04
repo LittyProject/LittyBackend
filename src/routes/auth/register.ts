@@ -3,6 +3,7 @@ import { userRegisterSchema, User } from "../../models/user";
 import db from "../../db";
 import * as f from '../../functions';
 import {verify} from "hcaptcha";
+import { messages } from '../../models/responseMessages';
 
 export default async function(req: express.Request, res: express.Response) {
     try {
@@ -17,14 +18,14 @@ export default async function(req: express.Request, res: express.Response) {
 
         try {
             const data = await verify(process.env.HCAPTCHA_SECRET || '', credentials.hcaptcha);
-            if(!data.success) throw 'captcha failed';
+            if(!data.success) throw messages.CAPTCHA_ERROR;
         } catch(err) {
-            throw 'captcha failed';
+            throw messages.CAPTCHA_ERROR;
         }
 
         let check = await db.getUserByEmail(credentials.email);
         if(check) {
-            throw 'email claimed';
+            throw messages.EMAIL_CLAIMED;
         }
 
         const user: User = {
@@ -57,9 +58,6 @@ export default async function(req: express.Request, res: express.Response) {
         await db.insertUser(user);
         return res.success(user);
     } catch(err) {
-        if(err !== "captcha failed" || err !== "email claimed") {
-            //err = "invalid credentials"
-        }
         return res.error(err);
     }
 }

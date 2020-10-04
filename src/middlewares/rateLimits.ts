@@ -1,4 +1,5 @@
 import express from 'express';
+import { messages } from '../models/responseMessages';
 
 export default function rateLimits(seconds: number, maxRequests: number) {
     const cache: {[id: string]: {lastRequest: Date, requestCount: number}} = {};
@@ -16,7 +17,7 @@ export default function rateLimits(seconds: number, maxRequests: number) {
             const end = new Date(c.lastRequest.getTime());
             end.setSeconds(end.getSeconds() + seconds);
             if (new Date() < end) {
-                res.status(419).json({message: "ratelimited"});
+                res.status(419).json({message: messages.RATELIMIT});
             } else {
                 c.requestCount = 0;
                 c.lastRequest = new Date();

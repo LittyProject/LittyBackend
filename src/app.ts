@@ -1,5 +1,6 @@
 import express, {response} from 'express';
 import bodyParser from 'body-parser';
+import { messages } from './models/responseMessages';
 
 const methodOverride = require("method-override");
 const app = express();
@@ -30,16 +31,20 @@ server.listen(PORT, () => {
 
 // OTHER
 response.success = function(data) {
-    if(data) this.json({data});
-    else this.json({message: "success"});
+    if(data) this.json(data);
+    else this.json({message: messages.SUCCESS});
 }
 
 response.notFound = function() {
-    this.status(404).json({message: "not found"});
+    this.status(404).json({message: messages.NOT_FOUND});
 }
 
 response.notAuthorized = function() {
-    this.status(401).json({message: "unauthorized"});
+    this.status(401).json({message: messages.UNAUTHORIZED});
+}
+
+response.notAuthorized = function() {
+    this.status(401).json({message: messages.BANNED});
 }
 
 response.error = function(message) {

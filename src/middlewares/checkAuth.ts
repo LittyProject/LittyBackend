@@ -14,6 +14,7 @@ export default async function(req: express.Request, res: express.Response, next:
     if(!user) {
 	    return res.notAuthorized();
 	} else {
+        if(user.banned) return res.banned();
         req.user = user;
         next();
     }

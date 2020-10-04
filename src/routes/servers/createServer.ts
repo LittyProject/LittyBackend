@@ -3,10 +3,11 @@ import express from 'express';
 import * as f from '../../functions';
 import db from "../../db";
 import { Message } from "../../models/messages";
+import { messages } from "../../models/responseMessages";
 
 export default async function(req: express.Request, res: express.Response) {
     if(!req.user) return res.notAuthorized();
-    if(req.user.servers.length >= 50) return res.error("too much servers on");
+    if(req.user.servers.length >= 50) return res.error(messages.TOO_MUCH_SERVERS);
 
     const server: Server = {
         id: f.genID(),

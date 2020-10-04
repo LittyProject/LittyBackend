@@ -1,10 +1,11 @@
 import express from 'express';
 import db from "../../db";
 import checkOnServer from "../../middlewares/checkOnServer";
+import { messages } from '../../models/responseMessages';
 
 export default async function(req: express.Request, res: express.Response) {
     if(!req.user) return res.notAuthorized();
-    if(req.user.servers.length >= 50) return res.error("too much servers on");
+    if(req.user.servers.length >= 50) return res.error(messages.TOO_MUCH_SERVERS);
 
     if(!checkOnServer(req.user, req.params.id)) return res.notFound;
 
@@ -14,7 +15,7 @@ export default async function(req: express.Request, res: express.Response) {
         await db.updateUser(req.user);
         return res.success();
     }
-    if(server.ownerId == req.user.id) return res.error("server owner");
+    if(server.ownerId == req.user.id) return res.error(messages.SERVER_OWNER);
 
     req.user.servers = req.user.servers.filter(x => x !== req.params.id);
     await db.updateUser(req.user);
