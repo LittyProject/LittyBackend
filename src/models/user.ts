@@ -39,12 +39,8 @@ export const userLoginSchema = z.object({
 export const userRegisterSchema = z.object({
     email: z.string().email(),
     password: passwordSchema,
-    confirmPassword: passwordSchema,
     username: z.string().min(3, {message: "Must be 3 or more characters long"}).max(24, {message: "Must be 24 or fewer characters long"}),
     hcaptcha: z.string()
-}).refine(x => x.password === x.confirmPassword, {
-    message: 'passwords dont match',
-    path: ['confirmPassword'],
 });
 
 export const resetPasswordSchema = z.object({
@@ -64,7 +60,6 @@ export const editUserSchema = userRegisterSchema.omit({email: true, password: tr
 export const userUpdate = z.object({
     email: z.string().email(),
     password: passwordSchema,
-    confirmPassword: passwordSchema,
     username: z.string().min(3, {message: "Must be 3 or more characters long"}).max(24, {message: "Must be 24 or fewer characters long"}),
     tag: z.string().length(4, {message: "Must be 4 characters long"}),
 }).refine(x => x.tag.toLowerCase().match(/[0-9ABCDEF]/g), {

@@ -22,7 +22,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(bodyParser.json())
 
-app.use("/", require("./routes/index")); 
+app.use("/api/", require("./routes/index"));
+app.use("/", require("./routes/index"));
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
@@ -43,10 +44,14 @@ response.notAuthorized = function() {
     this.status(401).json({message: messages.UNAUTHORIZED});
 }
 
-response.notAuthorized = function() {
+response.banned = function() {
     this.status(401).json({message: messages.BANNED});
 }
 
 response.error = function(message) {
     this.status(403).json({message});
+}
+
+response.authError = function(err) {
+    this.json({error: err});
 }

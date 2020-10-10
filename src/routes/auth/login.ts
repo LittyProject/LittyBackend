@@ -19,6 +19,7 @@ export default async function(req: express.Request, res: express.Response) {
             }
         }
     } catch(err) {
-        return res.error(err);
+        console.log(err);
+        return res.authError(err);
     }
 }

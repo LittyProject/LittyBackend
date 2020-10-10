@@ -8,10 +8,9 @@ import { messages } from '../../models/responseMessages';
 export default async function(req: express.Request, res: express.Response) {
     try {
         let model = {
-            hcaptcha: req.body.hcaptcha,
+            hcaptcha: req.body.hcaptcha || "",
             email: req.body.email,
             password: req.body.password,
-            confirmPassword: req.body.confirmPassword,
             username: req.body.username
         };
         let credentials = userRegisterSchema.parse(model);
@@ -58,6 +57,6 @@ export default async function(req: express.Request, res: express.Response) {
         await db.insertUser(user);
         return res.success(user);
     } catch(err) {
-        return res.error(err);
+        return res.authError(err);
     }
 }

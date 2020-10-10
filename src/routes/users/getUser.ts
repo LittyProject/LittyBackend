@@ -1,12 +1,12 @@
+import { equal } from 'assert';
 import express from 'express';
 import db from "../../db";
 import * as f from "../../functions";
 
 export default async function(req: express.Request, res: express.Response) {
     try {
-        if(!req.params.id) return res.notFound();
-
-        const user = await db.getUser(req.params.id);
+        if(!req.user) return res.notAuthorized;
+        const user = await db.getUser(req.params.id == "@me" ? req.user?.id : req.params.id);
         if(!user) {
             return res.notFound();
         } else {
