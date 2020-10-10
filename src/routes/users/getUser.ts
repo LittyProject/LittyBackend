@@ -15,6 +15,7 @@ export default async function(req: express.Request, res: express.Response) {
                 return res.success(model);
             } else {
                 return res.success(user);
+                
             }
         }
     } catch(err) {
