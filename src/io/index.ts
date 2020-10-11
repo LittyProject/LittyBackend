@@ -46,6 +46,7 @@ module.exports = async (io: any)=>{
     });
 
     io.on("connection", async (socket: any)=>{
+        console.log(socket.id + ' connected');
 
         socket.on("connect-servers", async (data: any, callback: any)=>{
             try {
