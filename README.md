@@ -64,23 +64,23 @@ yarn run start
 | DELETE \| `/servers/:id/leave` | yes |  | 30/3m |
 
 ## User Status List
-ID - Real Name
-0 - Offline
-1 - Online
-2 - Idle
-3 - Dnd
-4 - Coding
-5 - Reading
-6 - Learning
-7 - Shoping
-8 - Hacking
-9 - Singing
-10 - Playing
-11 - Watching
-12 - Listening
-13 - Competing
-14 - Exercising
-
+| ID | Real Status Name |
+|:-:|:-:|
+| 0 | Offline |
+| 1 | Online |
+| 2 | Idle |
+| 3 | Dnd |
+| 4 | Coding |
+| 5 | Reading |
+| 6 | Learning |
+| 7 | Shoping |
+| 8 | Hacking |
+| 9 | Singing |
+| 10 | Playing |
+| 11 | Watching |
+| 12 | Listening |
+| 13 | Competing |
+| 14 | Exercising |
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
