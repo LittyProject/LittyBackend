@@ -15,12 +15,12 @@ export default async function(req: express.Request, res: express.Response) {
         };
         let credentials = userRegisterSchema.parse(model);
 
-        try {
+        /*try {
             const data = await verify(process.env.HCAPTCHA_SECRET || '', credentials.hcaptcha);
             if(!data.success) throw messages.CAPTCHA_ERROR;
         } catch(err) {
             throw messages.CAPTCHA_ERROR;
-        }
+        }*/
 
         let check = await db.getUserByEmail(credentials.email);
         if(check) {
@@ -42,7 +42,7 @@ export default async function(req: express.Request, res: express.Response) {
             // 0=online, 1=idle, 2=dnd, 3=coding, 4=watching, 5=listening, 6=playing, 7=offline
             status: 0,
             badges: [],
-            
+
             email: credentials.email,
             password: await f.hashPassword(credentials.password),
             token: f.createID(40),
@@ -53,10 +53,13 @@ export default async function(req: express.Request, res: express.Response) {
 
             perm: 0
         };
-        
+
+        console.log(user);
+
         await db.insertUser(user);
         return res.success(user);
     } catch(err) {
+        console.log(err);
         return res.authError(err);
     }
 }

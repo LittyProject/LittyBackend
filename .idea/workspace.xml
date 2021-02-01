@@ -22,7 +22,7 @@
     <list default="true" id="2b5c0b48-ef34-44d9-979a-b82a6f1b57ae" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/auth/register.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/auth/register.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,7 +73,7 @@
       <workItem from="1602770318960" duration="2785000" />
       <workItem from="1612180707753" duration="1300000" />
       <workItem from="1612185115561" duration="29000" />
-      <workItem from="1612185573422" duration="1788000" />
+      <workItem from="1612185573422" duration="5554000" />
     </task>
     <servers />
   </component>

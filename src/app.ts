@@ -41,7 +41,7 @@ app.use(bodyParser.json())
 app.use("/api/", require("./routes/index"));
 app.use("/", require("./routes/index"));
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 1920;
 server.listen(PORT, () => {
     console.log('Litty is running on port: '+PORT);
 });
