@@ -39,7 +39,6 @@ export default async function(req: express.Request, res: express.Response) {
             createdAt: new Date(),
 
             customStatus: "",
-            // 0=online, 1=idle, 2=dnd, 3=coding, 4=watching, 5=listening, 6=playing, 7=offline
             status: 0,
             badges: [],
 

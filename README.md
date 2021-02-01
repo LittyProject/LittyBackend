@@ -57,10 +57,29 @@ yarn run start
 | POST \| `/auth/login` | no | `{"username": string, "password": string}` |  |
 | POST \| `/auth/register` | no | `{"username": string, "password": string, "confirmPassword": string, "email": string, "hcaptcha": string}` |  |
 | GET \| `/users/:id` | yes |  | 100/20s |
+| PUT \| `/users/:id/edit` | yes | `{"username": string, "password": string, "tag": string, "email": string}` | 5/10m |
 | GET \| `/servers/:id` | yes |  | 100/20s | 
 | POST \| `/servers` | yes | `{"name": string}` | 5/3m |
 | POST \| `/servers/:id/join` | yes | `{}` | 30/3m |
 | DELETE \| `/servers/:id/leave` | yes |  | 30/3m |
+
+## User Status List
+ID - Real Name
+0 - Offline
+1 - Online
+2 - Idle
+3 - Dnd
+4 - Coding
+5 - Reading
+6 - Learning
+7 - Shoping
+8 - Hacking
+9 - Singing
+10 - Playing
+11 - Watching
+12 - Listening
+13 - Competing
+14 - Exercising
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

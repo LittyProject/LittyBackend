@@ -2,8 +2,9 @@ import {Message} from "../models/messages";
 import db from "../db";
 import * as f from "../functions";
 import {messages} from "../models/responseMessages";
+import socket from "socket.io";
 
-async function saveMessage(io: any, data: any): Promise<any>{
+async function saveMessage(io: socket.Socket, data: any): Promise<any>{
     try {
         let user = await db.getUser(data.user.id);
         if(!user) return;
@@ -24,7 +25,7 @@ async function saveMessage(io: any, data: any): Promise<any>{
 }
 
 
-module.exports = async (io: any)=>{
+module.exports = async (io: socket.Socket)=>{
 
     require('socketio-auth')(io, {
         authenticate: async function (socket: any, data: any, callback: any) {
@@ -36,8 +37,7 @@ module.exports = async (io: any)=>{
         },
         postAuthenticate: async function postAuthenticate(socket: any, data: any) {
             const token = data.token;
-            const user = await db.getUserByToken(token);
-            socket.user = user;
+            socket.user = await db.getUserByToken(token);
         },
         disconnect: function disconnect(socket: any) {
             console.log(socket.id + ' disconnected');

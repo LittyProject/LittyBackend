@@ -5,6 +5,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^14.11.2",
+    "@types/socket.io": "^2.1.13",
     "typescript": "^3.9.7"
   },
   "scripts": {
