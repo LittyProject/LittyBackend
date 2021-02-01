@@ -20,7 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2b5c0b48-ef34-44d9-979a-b82a6f1b57ae" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,6 +33,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1irtZ9mnzoVkO3jQN6KD0r5395k" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -38,9 +41,10 @@
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -53,19 +57,7 @@
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
-  </component>
-  <component name="RunManager">
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
-      <option name="arquillianRunConfiguration">
-        <value>
-          <option name="containerStateName" value="" />
-        </value>
-      </option>
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+    <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -79,6 +71,9 @@
       <workItem from="1602677773976" duration="232000" />
       <workItem from="1602678025171" duration="376000" />
       <workItem from="1602770318960" duration="2785000" />
+      <workItem from="1612180707753" duration="1300000" />
+      <workItem from="1612185115561" duration="29000" />
+      <workItem from="1612185573422" duration="1788000" />
     </task>
     <servers />
   </component>
@@ -98,23 +93,6 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="168" y="0" key="#Project_Structure" timestamp="1602771643265">
-      <screen x="0" y="0" width="1360" height="723" />
-    </state>
-    <state x="168" y="0" key="#Project_Structure/0.0.1360.723@0.0.1360.723" timestamp="1602771643265" />
-    <state x="398" y="150" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1602771848298">
-      <screen x="0" y="0" width="1360" height="723" />
-    </state>
-    <state x="398" y="150" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1360.723@0.0.1360.723" timestamp="1602771848298" />
-    <state x="168" y="0" key="SettingsEditor" timestamp="1602678153431">
-      <screen x="0" y="0" width="1360" height="723" />
-    </state>
-    <state x="168" y="0" key="SettingsEditor/0.0.1360.723@0.0.1360.723" timestamp="1602678153431" />
-    <state x="0" y="0" key="new project wizard" timestamp="1602771653608">
-      <screen x="0" y="0" width="1360" height="723" />
-    </state>
-    <state x="0" y="0" key="new project wizard/0.0.1360.723@0.0.1360.723" timestamp="1602771653608" />
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

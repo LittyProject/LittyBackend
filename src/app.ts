@@ -1,6 +1,8 @@
 import express, {response} from 'express';
 import bodyParser from 'body-parser';
 import { messages } from './models/responseMessages';
+import cors from 'cors';
+
 
 const methodOverride = require("method-override");
 const app = express();
@@ -13,6 +15,20 @@ const io = socketIO(server);
 require("./io")(io);
 
 // EXPRESS SECTION
+
+
+const corsWhitelist = [
+    'http://localhost:1920', 'http://localhost:8080'
+];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if(!origin) callback(null, true);
+        else if(!corsWhitelist.includes(origin)) callback(new Error('cors origin not allowed: ' + origin), false);
+        else callback(null, true);
+    }
+}));
+
 app.use((req, res, next)=>{
     console.log(`[${req.method}] ${req.path}`);
     next();
