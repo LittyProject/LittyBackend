@@ -3,6 +3,7 @@ import db from "../db";
 import * as f from "../functions";
 import {messages} from "../models/responseMessages";
 import socket from "socket.io";
+import {updateCustomStatus} from "../models/user";
 
 async function saveMessage(io: socket.Socket, data: any): Promise<any>{
     try {
@@ -57,6 +58,18 @@ module.exports = async (io: socket.Socket)=>{
                 for(let server of user.servers){
                     socket.join(server);
                 }
+                callback();
+            } catch(err) {
+                callback(new Error(err));
+            }
+        });
+
+        socket.on("updateCustomStatus", async (data: any, callback: any)=>{
+            try {
+                let user = await db.getUser(socket.user.id);
+                if(!user) throw messages.UNAUTHORIZED;
+                if(user.banned) throw messages.BANNED;
+                //user.customStatus = updateCustomStatus.parse(data);
                 callback();
             } catch(err) {
                 callback(new Error(err));

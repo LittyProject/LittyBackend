@@ -56,6 +56,10 @@ export const confirmResetPasswordSchema = z.object({
 
 export const editUserSchema = userRegisterSchema.omit({email: true, password: true, confirmPassword: true});
 
+export const updateCustomStatus = z.object({
+    customStatus: z.string().min(0).max(50, {message: "Must be 50 or fewer characters long"})
+});
+
 export const userUpdate = z.object({
     email: z.string().email(),
     password: passwordSchema,
