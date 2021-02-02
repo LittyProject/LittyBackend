@@ -11,14 +11,19 @@ const app = express();
 const http = require("http");
 const socketIO = require("socket.io");
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = socketIO(server, {
+    cors: {
+        origin: '*',
+    }
+});
+
 require("./io")(io);
 
 // EXPRESS SECTION
 
 
 const corsWhitelist = [
-    'http://localhost:1920', 'http://localhost:8080'
+    'http://localhost:1920', 'http://localhost:8080', 'http://localhost:3000', 'http://localhost:3000/', 'http://192.168.8.42:8080'
 ];
 
 app.use(cors({

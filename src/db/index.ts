@@ -48,7 +48,7 @@ class DB {
     }
 
     async getUserByToken(token: string): Promise<User | null> {
-        const arr = await users.filter({token}).run(await conn());
+        const arr = await users.filter({token: token}).run(await conn());
         if(arr.length > 0){
             let isAlive = await this.isUserAlive(arr[0].id);
             if(!isAlive) {
@@ -60,7 +60,7 @@ class DB {
     }
 
     async getUserByEmail(email: string): Promise<User | null> {
-        const arr = await users.filter({email}).run(await conn());
+        const arr = await users.filter({email: email}).run(await conn());
         if(arr.length > 0){
             let isAlive = await this.isUserAlive(arr[0].id);
             if(!isAlive) {

@@ -25,7 +25,7 @@ async function saveMessage(io: any, data: any): Promise<any>{
 
 
 module.exports = async (io: any)=>{
-
+    console.log("start");
     require('socketio-auth')(io, {
         authenticate: async function (socket: any, data: any, callback: any) {
             const token = data.token;
