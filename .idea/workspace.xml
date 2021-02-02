@@ -21,8 +21,11 @@
   <component name="ChangeListManager">
     <list default="true" id="2b5c0b48-ef34-44d9-979a-b82a6f1b57ae" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/io/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/io/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/user.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middlewares/checkAuth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/middlewares/checkAuth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/servers/createServer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/servers/createServer.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,19 +74,6 @@
     <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
-  <component name="RunManager">
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
-      <option name="arquillianRunConfiguration">
-        <value>
-          <option name="containerStateName" value="" />
-        </value>
-      </option>
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -99,7 +89,9 @@
       <workItem from="1612180707753" duration="1300000" />
       <workItem from="1612185115561" duration="29000" />
       <workItem from="1612185573422" duration="5723000" />
-      <workItem from="1612197172433" duration="3473000" />
+      <workItem from="1612197172433" duration="3501000" />
+      <workItem from="1612249049458" duration="16000" />
+      <workItem from="1612249184253" duration="9878000" />
     </task>
     <servers />
   </component>

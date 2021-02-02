@@ -34,11 +34,14 @@ module.exports = async (io: socket.Socket)=>{
             const user = await db.getUserByToken(token);
             if(!user) return callback(new Error(messages.UNAUTHORIZED));
             if(user.banned) return callback(new Error(messages.BANNED));
+            socket.join(user.id);
+            for(let server of user.servers){
+                socket.join(server);
+            }
             return callback(null, true);
         },
         postAuthenticate: async function postAuthenticate(socket: any, data: any) {
-            const token = data.token;
-            socket.user = await db.getUserByToken(token);
+            socket.token = data.token;
         },
         disconnect: function disconnect(socket: any) {
             console.log(socket.id + ' disconnected');
@@ -49,27 +52,14 @@ module.exports = async (io: socket.Socket)=>{
     io.on("connection", async (socket: any)=>{
         console.log(socket.id + ' connected');
 
-        socket.on("connect-servers", async (data: any, callback: any)=>{
-            try {
-                const user = await db.getUser(socket.user.id);
-                if(!user) throw messages.UNAUTHORIZED;
-                if(user.banned) throw messages.BANNED;
-                if(user.servers == []) return callback();
-                for(let server of user.servers){
-                    socket.join(server);
-                }
-                callback();
-            } catch(err) {
-                callback(new Error(err));
-            }
-        });
-
         socket.on("updateCustomStatus", async (data: any, callback: any)=>{
             try {
-                let user = await db.getUser(socket.user.id);
+                let user = await db.getUserByToken(socket.token);
                 if(!user) throw messages.UNAUTHORIZED;
                 if(user.banned) throw messages.BANNED;
-                //user.customStatus = updateCustomStatus.parse(data);
+                let validatedStatus = updateCustomStatus.parse(data);
+                user.customStatus = validatedStatus.customStatus;
+                await db.updateUser(user);
                 callback();
             } catch(err) {
                 callback(new Error(err));
@@ -77,15 +67,15 @@ module.exports = async (io: socket.Socket)=>{
         });
 
         socket.on("createMessage", async (data: any, callback: any)=>{
-            const user = await db.getUser(socket.user.id);
+            const user = await db.getUserByToken(socket.token);
             if(!user) throw messages.UNAUTHORIZED;
             if(user.banned) throw messages.BANNED;
-            saveMessage(io, data);
+            await saveMessage(io, data);
             callback();
         });
 
         socket.on("createChannel", async (data: any, callback: any)=>{
-            const user = await db.getUser(socket.user.id);
+            const user = await db.getUserByToken(socket.token);
             if(!user) throw messages.UNAUTHORIZED;
             if(user.banned) throw messages.BANNED;
             io.to(data.serverID).emit(`newChannel`, data.channel);
@@ -93,7 +83,7 @@ module.exports = async (io: socket.Socket)=>{
         });
 
         socket.on("memberJoinServer", async (data: any, callback: any)=>{
-            const user = await db.getUser(socket.user.id);
+            const user = await db.getUserByToken(socket.token);
             if(!user) throw messages.UNAUTHORIZED;
             if(user.banned) throw messages.BANNED;
             io.to(data.serverID).emit("newMember", data.channel);

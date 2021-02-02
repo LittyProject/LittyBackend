@@ -50,6 +50,9 @@ npm run start
 yarn run start
 ```
 
+## Authorization header (Bearer Authorization)
+https://swagger.io/docs/specification/authentication/bearer-authentication/
+
 ## API
 
 | Method \| Path | Required Auth | Example body | Ratelimit (req/time) |
