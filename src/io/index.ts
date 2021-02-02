@@ -52,7 +52,7 @@ module.exports = async (io: socket.Socket)=>{
     io.on("connection", async (socket: any)=>{
         console.log(socket.id + ' connected');
 
-        socket.on("updateCustomStatus", async (data: any, callback: any)=>{
+        socket.on("updateCustomStatus", async (data: any)=>{
             try {
                 let user = await db.getUserByToken(socket.token);
                 if(!user) throw messages.UNAUTHORIZED;
@@ -68,34 +68,31 @@ module.exports = async (io: socket.Socket)=>{
                 for(let server of user.servers){
                     socket.to(server).emit(validatedStatus);
                 }
-                socket.send(validatedStatus);
+                socket.to(user.id).emit(validatedStatus);
             } catch(err) {
-                socket.send(new Error(err));
+                console.log(err);
             }
         });
 
-        socket.on("createMessage", async (data: any, callback: any)=>{
+        socket.on("createMessage", async (data: any)=>{
             const user = await db.getUserByToken(socket.token);
             if(!user) throw messages.UNAUTHORIZED;
             if(user.banned) throw messages.BANNED;
             await saveMessage(io, data);
-            callback();
         });
 
-        socket.on("createChannel", async (data: any, callback: any)=>{
+        socket.on("createChannel", async (data: any)=>{
             const user = await db.getUserByToken(socket.token);
             if(!user) throw messages.UNAUTHORIZED;
             if(user.banned) throw messages.BANNED;
             io.to(data.serverID).emit(`newChannel`, data.channel);
-            callback();
         });
 
-        socket.on("memberJoinServer", async (data: any, callback: any)=>{
+        socket.on("memberJoinServer", async (data: any)=>{
             const user = await db.getUserByToken(socket.token);
             if(!user) throw messages.UNAUTHORIZED;
             if(user.banned) throw messages.BANNED;
             io.to(data.serverID).emit("newMember", data.channel);
-            callback();
         });
     });
 };
