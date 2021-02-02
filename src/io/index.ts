@@ -2,8 +2,10 @@ import {Message} from "../models/messages";
 import db from "../db";
 import * as f from "../functions";
 import {messages} from "../models/responseMessages";
+import socket from "socket.io";
+import {updateCustomStatus} from "../models/user";
 
-async function saveMessage(io: any, data: any): Promise<any>{
+async function saveMessage(io: socket.Socket, data: any): Promise<any>{
     try {
         let user = await db.getUser(data.user.id);
         if(!user) return;
@@ -24,20 +26,22 @@ async function saveMessage(io: any, data: any): Promise<any>{
 }
 
 
-module.exports = async (io: any)=>{
-    console.log("start");
+module.exports = async (io: socket.Socket)=>{
+
     require('socketio-auth')(io, {
         authenticate: async function (socket: any, data: any, callback: any) {
             const token = data.token;
             const user = await db.getUserByToken(token);
             if(!user) return callback(new Error(messages.UNAUTHORIZED));
             if(user.banned) return callback(new Error(messages.BANNED));
+            socket.join(user.id);
+            for(let server of user.servers){
+                socket.join(server);
+            }
             return callback(null, true);
         },
         postAuthenticate: async function postAuthenticate(socket: any, data: any) {
-            const token = data.token;
-            const user = await db.getUserByToken(token);
-            socket.user = user;
+            socket.token = data.token;
         },
         disconnect: function disconnect(socket: any) {
             console.log(socket.id + ' disconnected');
@@ -48,31 +52,38 @@ module.exports = async (io: any)=>{
     io.on("connection", async (socket: any)=>{
         console.log(socket.id + ' connected');
 
-        socket.on("connect-servers", async (data: any, callback: any)=>{
+        socket.on("updateCustomStatus", async (data: any, callback: any)=>{
             try {
-                const user = await db.getUser(socket.user.id);
+                let user = await db.getUserByToken(socket.token);
                 if(!user) throw messages.UNAUTHORIZED;
                 if(user.banned) throw messages.BANNED;
-                if(user.servers == []) return callback();
-                for(let server of user.servers){
-                    socket.join(server);
+                let validatedStatus = updateCustomStatus.parse(data);
+                if(validatedStatus.customStatus){
+                    user.customStatus = validatedStatus.customStatus;
                 }
-                callback();
+                if(validatedStatus.status){
+                    user.status = validatedStatus.status;
+                }
+                await db.updateUser(user);
+                for(let server of user.servers){
+                    socket.to(server).emit(validatedStatus);
+                }
+                socket.send(validatedStatus);
             } catch(err) {
-                callback(new Error(err));
+                socket.send(new Error(err));
             }
         });
 
         socket.on("createMessage", async (data: any, callback: any)=>{
-            const user = await db.getUser(socket.user.id);
+            const user = await db.getUserByToken(socket.token);
             if(!user) throw messages.UNAUTHORIZED;
             if(user.banned) throw messages.BANNED;
-            saveMessage(io, data);
+            await saveMessage(io, data);
             callback();
         });
 
         socket.on("createChannel", async (data: any, callback: any)=>{
-            const user = await db.getUser(socket.user.id);
+            const user = await db.getUserByToken(socket.token);
             if(!user) throw messages.UNAUTHORIZED;
             if(user.banned) throw messages.BANNED;
             io.to(data.serverID).emit(`newChannel`, data.channel);
@@ -80,7 +91,7 @@ module.exports = async (io: any)=>{
         });
 
         socket.on("memberJoinServer", async (data: any, callback: any)=>{
-            const user = await db.getUser(socket.user.id);
+            const user = await db.getUserByToken(socket.token);
             if(!user) throw messages.UNAUTHORIZED;
             if(user.banned) throw messages.BANNED;
             io.to(data.serverID).emit("newMember", data.channel);

@@ -21,22 +21,39 @@
   <component name="ChangeListManager">
     <list default="true" id="2b5c0b48-ef34-44d9-979a-b82a6f1b57ae" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/db/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/db/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/io/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/io/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/io/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/io/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middlewares/checkAuth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/middlewares/checkAuth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/servers/createServer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/servers/createServer.ts" afterDir="false" />
+>>>>>>> 224bcae90484025347f0d9e16459aa4f9b888b5b
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1irtZ9mnzoVkO3jQN6KD0r5395k" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -49,16 +66,19 @@
     <property name="aspect.path.notification.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.standard" value="project" />
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.standard" value="" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="yarn" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="settings.javascript.linters.eslint" />
     <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
@@ -92,10 +112,17 @@
       <workItem from="1602770318960" duration="2785000" />
       <workItem from="1612180707753" duration="1300000" />
       <workItem from="1612185115561" duration="29000" />
+<<<<<<< HEAD
       <workItem from="1612185573422" duration="5554000" />
       <workItem from="1612192895903" duration="3204000" />
       <workItem from="1612209628109" duration="3150000" />
       <workItem from="1612274433910" duration="202000" />
+=======
+      <workItem from="1612185573422" duration="5723000" />
+      <workItem from="1612197172433" duration="3501000" />
+      <workItem from="1612249049458" duration="16000" />
+      <workItem from="1612249184253" duration="9878000" />
+>>>>>>> 224bcae90484025347f0d9e16459aa4f9b888b5b
     </task>
     <servers />
   </component>
@@ -116,5 +143,9 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

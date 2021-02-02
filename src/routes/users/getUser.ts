@@ -1,4 +1,3 @@
-import { equal } from 'assert';
 import express from 'express';
 import db from "../../db";
 import * as f from "../../functions";
@@ -15,7 +14,6 @@ export default async function(req: express.Request, res: express.Response) {
                 return res.success(model);
             } else {
                 return res.success(user);
-                
             }
         }
     } catch(err) {

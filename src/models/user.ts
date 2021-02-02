@@ -13,10 +13,9 @@ export const userSchema = z.object({
     createdAt: z.date(),
 
     customStatus: z.string().min(0).max(50, {message: "Must be 50 or fewer characters long"}),
-    // 0=online, 1=idle, 2=dnd, 3=coding, 4=watching, 5=listening, 6=playing, 7=offline
-    status: z.number().min(0, {message: "Must be >= 0"}).max(7, {message: "Must be <= 7"}),
+    status: z.number().min(0, {message: "Must be >= 0"}).max(14, {message: "Must be <= 14"}),
     badges: z.array(z.number()),
-    
+
     email: z.string().email(),
     password: z.string().min(8, {message: "Must be 8 or more characters long"}).max(32, {message: "Must be 32 or fewer characters long"}),
     token: z.string(),
@@ -56,6 +55,11 @@ export const confirmResetPasswordSchema = z.object({
 });
 
 export const editUserSchema = userRegisterSchema.omit({email: true, password: true, confirmPassword: true});
+
+export const updateCustomStatus = z.object({
+    customStatus: z.string().min(0).max(50, {message: "Must be 50 or fewer characters long"}).optional(),
+    status: z.number().optional()
+});
 
 export const userUpdate = z.object({
     email: z.string().email(),

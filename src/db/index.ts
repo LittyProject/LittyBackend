@@ -76,7 +76,7 @@ class DB {
         if(arr.length > 0){
             let isAlive = await this.isUserAlive(arr[0].id);
             if(!isAlive) {
-                arr[0].status = "offline";
+                arr[0].status = 0;
                 return arr[0] as User;
             }
         }
@@ -86,7 +86,7 @@ class DB {
     async getUserCount(): Promise<number> {
         return await users.count().run(await conn());
     }
-    
+
     async insertUser(user: User): Promise<User> {
         await users.insert(user).run(await conn());
         await this.userAlive(user.id);
@@ -105,13 +105,13 @@ class DB {
             let server = await this.getServer(x);
             if(!server) continue;
             await toReturn.push(server);
-        };
+        }
         return toReturn;
     }
 
 
 
-    
+
     async insertServer(server: Server): Promise<Server> {
         await servers.insert(server).run(await conn());
         return server;
@@ -128,7 +128,7 @@ class DB {
         };
         return toReturn;
     }
-    
+
     async getServer(serverID: string): Promise<Server | null> {
         return await servers.get(serverID).run(await conn());
     }
@@ -151,7 +151,7 @@ class DB {
     async getMessageCount(): Promise<number> {
         return await messages.count().run(await conn());
     }
-    
+
     async getMessage(messageID: string): Promise<Message | null> {
         return await messages.get(messageID).run(await conn());
     }
@@ -176,11 +176,7 @@ class DB {
                 await userAlive.insert({id, lastChecked: Date.now()}).run(await conn());
                 return true;
             } else {
-                if((cu.lastChecked + 1000 * 60 * 2) > Date.now()){
-                    return true;
-                } else {
-                    return false;
-                }
+                return (cu.lastChecked + 1000 * 60 * 2) > Date.now();
             }
         } else {
             return false;
