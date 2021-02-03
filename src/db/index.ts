@@ -40,7 +40,7 @@ class DB {
         if(u){
             let isAlive = await this.isUserAlive(id);
             if(!isAlive) {
-                u.status = "offline";
+                u.status = 0;
                 return u;
             }
         }
@@ -52,7 +52,7 @@ class DB {
         if(arr.length > 0){
             let isAlive = await this.isUserAlive(arr[0].id);
             if(!isAlive) {
-                arr[0].status = "offline";
+                arr[0].status = 0;
                 return arr[0] as User;
             }
         }
@@ -64,7 +64,7 @@ class DB {
         if(arr.length > 0){
             let isAlive = await this.isUserAlive(arr[0].id);
             if(!isAlive) {
-                arr[0].status = "offline";
+                arr[0].status = 0;
                 return arr[0] as User;
             }
         }
