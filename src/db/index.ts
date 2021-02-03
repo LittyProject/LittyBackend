@@ -1,7 +1,7 @@
 import { r, Connection } from 'rethinkdb-ts';
 
 import {Server} from '../models/server';
-import {User} from '../models/user';
+import {Member, User} from '../models/user';
 import {Message} from '../models/messages';
 
 let _conn: Connection | null = null;
@@ -44,6 +44,11 @@ class DB {
                 return u;
             }
         }
+        return u || null;
+    }
+
+    async getMember(id: string): Promise<Member | null> {
+        const u = await users.get(id).do((x: { eq: (arg0: null) => import("rethinkdb-ts").RValue<boolean>; without: (arg0: string, arg1: string, arg2: string, arg3: string, arg4: string) => any; })=>r.branch(x.eq(null), null, x.without("email", "password", "token", "servers", "friends"))).run(await conn());
         return u || null;
     }
 
@@ -117,12 +122,12 @@ class DB {
         return server;
     }
 
-    async getUsersOnServer(serverID: string): Promise<User[] | null> {
-        let userArray: User[] = await users.filter(r.row("servers").contains(serverID)).run(await conn());
+    async getUsersOnServer(serverID: string): Promise<Member[] | null> {
+        let userArray: Member[] = await users.filter(r.row("servers").contains(serverID)).run(await conn());
         if(userArray.length < 1) return [];
-        let toReturn: User[] = [];
+        let toReturn: Member[] = [];
         for(let x of userArray) {
-            let user = await this.getUser(x.id);
+            let user = await this.getMember(x.id);
             if(!user) continue;
             await toReturn.push(user);
         };
