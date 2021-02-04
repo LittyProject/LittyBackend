@@ -65,9 +65,9 @@ module.exports = async (io: socket.Socket)=>{
                     user.status = validatedStatus.status;
                 }
                 for(let server of user.servers){
-                    io.to(server).emit('updateCustomStatus', validatedStatus);
+                    io.to(server).emit('updateCustomStatus', {id: user.id, ...validatedStatus});
                 }
-                io.to(user.id).emit('updateCustomStatus', validatedStatus);
+                io.to(user.id).emit('updateCustomStatus', {id: user.id, ...validatedStatus});
                 await db.updateUser(user);
             } catch(err) {
                 console.log(err);
