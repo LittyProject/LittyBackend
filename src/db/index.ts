@@ -3,6 +3,7 @@ import { r, Connection } from 'rethinkdb-ts';
 import {Server} from '../models/server';
 import {Member, User} from '../models/user';
 import {Message} from '../models/messages';
+import {Invite} from "../models/invite";
 
 let _conn: Connection | null = null;
 async function conn(): Promise<Connection> {
@@ -18,6 +19,7 @@ async function conn(): Promise<Connection> {
 }
 
 const servers = r.table('servers');
+const invite = r.table('invites');
 const users = r.table('users');
 const messages = r.table('messages');
 const userAlive = r.table('checkUsers');
@@ -37,13 +39,6 @@ class DB {
 
     async getUser(id: string): Promise<User | null> {
         const u = await users.get(id).run(await conn());
-        if(u){
-            let isAlive = await this.isUserAlive(id);
-            if(!isAlive) {
-                u.status = 0;
-                return u;
-            }
-        }
         return u || null;
     }
 
@@ -54,37 +49,34 @@ class DB {
 
     async getUserByToken(token: string): Promise<User | null> {
         const arr = await users.filter({token: token}).run(await conn());
-        if(arr.length > 0){
-            let isAlive = await this.isUserAlive(arr[0].id);
-            if(!isAlive) {
-                arr[0].status = 0;
-                return arr[0] as User;
-            }
-        }
         return arr.length > 0 ? arr[0] as User : null;
+    }
+
+    async getServerInvites(id: string): Promise<Invite[] | null> {
+        const a = await invite.filter({guild:{id: id}}).run(await conn());
+        if(a.length > 0){
+            return a as Invite[];
+        }else{
+            return null;
+        }
+    }
+
+    async getInvite(id: string): Promise<Invite | null> {
+        const a = await invite.filter({code: id}).run(await conn());
+        if(a.length > 0){
+            return a[0] as Invite;
+        }else{
+            return null;
+        }
     }
 
     async getUserByEmail(email: string): Promise<User | null> {
         const arr = await users.filter({email: email}).run(await conn());
-        if(arr.length > 0){
-            let isAlive = await this.isUserAlive(arr[0].id);
-            if(!isAlive) {
-                arr[0].status = 0;
-                return arr[0] as User;
-            }
-        }
         return arr.length > 0 ? arr[0] as User : null;
     }
 
     async getUserByUsernameAndTag(username: string, tag: string): Promise<User | null> {
         const arr = await users.filter({username, tag}).run(await conn());
-        if(arr.length > 0){
-            let isAlive = await this.isUserAlive(arr[0].id);
-            if(!isAlive) {
-                arr[0].status = 0;
-                return arr[0] as User;
-            }
-        }
         return arr.length > 0 ? arr[0] as User : null;
     }
 
@@ -94,7 +86,6 @@ class DB {
 
     async insertUser(user: User): Promise<User> {
         await users.insert(user).run(await conn());
-        await this.userAlive(user.id);
         return user;
     }
 

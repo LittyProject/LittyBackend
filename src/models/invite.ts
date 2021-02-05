@@ -1,5 +1,8 @@
 import * as z from 'zod';
-const inviteSchema = {
+import {userSchema} from "./user";
+export const inviteSchema = z.object({
+    id: z.string(),
+    code: z.string(),
     guild: z.object({
         id: z.string(),
         name: z.string(),
@@ -16,4 +19,6 @@ const inviteSchema = {
         avatarURL: z.string(),
         tag: z.string(),
     })
-}
+});
+
+export type Invite = z.infer<typeof inviteSchema>;

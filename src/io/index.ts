@@ -39,7 +39,7 @@ module.exports = async (io: socket.Socket)=>{
                 socket.join(server);
             }
             try {
-                let validatedStatus = updateCustomStatus.parse({status: 2});
+                let validatedStatus = updateCustomStatus.parse({status: user.onlineStatus});
                 user.status = <number>validatedStatus.status;
                 for(let server of user.servers){
                     io.to(server).emit('updateCustomStatus', {id: user.id, server: server, ...validatedStatus});
@@ -66,6 +66,7 @@ module.exports = async (io: socket.Socket)=>{
                 let user = await db.getUserByToken(socket.token);
                 if(!user) throw messages.UNAUTHORIZED;
                 if(user.banned) throw messages.BANNED;
+                user.onlineStatus = user.status;
                 let validatedStatus = updateCustomStatus.parse({status: 1});
                 user.status = <number>validatedStatus.status;
                 for(let server of user.servers){

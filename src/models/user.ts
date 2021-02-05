@@ -13,7 +13,8 @@ export const userSchema = z.object({
     createdAt: z.date(),
 
     customStatus: z.string().min(0).max(50, {message: "Must be 50 or fewer characters long"}),
-    status: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 14"}),
+    status: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 15"}),
+    onlineStatus: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 15"}),
     badges: z.array(z.number()),
 
     email: z.string().email(),
@@ -40,6 +41,7 @@ export const guildMemberSchema = z.object({
 
     customStatus: z.string().min(0).max(50, {message: "Must be 50 or fewer characters long"}),
     status: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 14"}),
+    onlineStatus: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 15"}),
     badges: z.array(z.number()),
 
     deleted: z.boolean(),
@@ -78,7 +80,8 @@ export const editUserSchema = userRegisterSchema.omit({email: true, password: tr
 
 export const updateCustomStatus = z.object({
     customStatus: z.string().min(0).max(50, {message: "Must be 50 or fewer characters long"}).optional(),
-    status: z.number().optional()
+    status: z.number().optional(),
+    onlineStatus: z.number().optional()
 });
 
 export const userUpdate = z.object({
