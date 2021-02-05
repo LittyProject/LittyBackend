@@ -50,8 +50,36 @@ module.exports = async (io: socket.Socket)=>{
     });
 
     io.on("connection", async (socket: any)=>{
-        console.log(socket.id + ' connected');
-
+        try {
+            let user = await db.getUserByToken(socket.token);
+            if(!user) throw messages.UNAUTHORIZED;
+            if(user.banned) throw messages.BANNED;
+            let validatedStatus = updateCustomStatus.parse({status: 2});
+            user.status = <number>validatedStatus.status;
+            for(let server of user.servers){
+                io.to(server).emit('updateCustomStatus', {id: user.id, server: server, ...validatedStatus});
+            }
+            io.to(user.id).emit('updateCustomStatus', {...validatedStatus});
+            await db.updateUser(user);
+        } catch(err) {
+            console.log(err);
+        }
+        socket.on('disconnect', async()=>{
+            try {
+                let user = await db.getUserByToken(socket.token);
+                if(!user) throw messages.UNAUTHORIZED;
+                if(user.banned) throw messages.BANNED;
+                let validatedStatus = updateCustomStatus.parse({status: 1});
+                user.status = <number>validatedStatus.status;
+                for(let server of user.servers){
+                    io.to(server).emit('updateCustomStatus', {id: user.id, server: server, ...validatedStatus});
+                }
+                io.to(user.id).emit('updateCustomStatus', {...validatedStatus});
+                await db.updateUser(user);
+            } catch(err) {
+                console.log(err);
+            }
+        });
         socket.on("updateCustomStatus", async (data: any)=>{
             try {
                 let user = await db.getUserByToken(socket.token);
@@ -65,9 +93,9 @@ module.exports = async (io: socket.Socket)=>{
                     user.status = validatedStatus.status;
                 }
                 for(let server of user.servers){
-                    io.to(server).emit('updateCustomStatus', {id: user.id, ...validatedStatus});
+                    io.to(server).emit('updateCustomStatus', {id: user.id, server: server, ...validatedStatus});
                 }
-                io.to(user.id).emit('updateCustomStatus', {id: user.id, ...validatedStatus});
+                io.to(user.id).emit('updateCustomStatus', {...validatedStatus});
                 await db.updateUser(user);
             } catch(err) {
                 console.log(err);
