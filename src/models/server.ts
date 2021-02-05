@@ -1,5 +1,4 @@
 import * as z from 'zod';
-import {Member, guildMemberSchema} from "./user";
 
 const serverSchema = z.object({
     id: z.string(),

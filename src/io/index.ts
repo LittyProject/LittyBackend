@@ -38,6 +38,17 @@ module.exports = async (io: socket.Socket)=>{
             for(let server of user.servers){
                 socket.join(server);
             }
+            try {
+                let validatedStatus = updateCustomStatus.parse({status: 2});
+                user.status = <number>validatedStatus.status;
+                for(let server of user.servers){
+                    io.to(server).emit('updateCustomStatus', {id: user.id, server: server, ...validatedStatus});
+                }
+                io.to(user.id).emit('updateCustomStatus', {...validatedStatus});
+                await db.updateUser(user);
+            } catch(err) {
+                console.log(err);
+            }
             return callback(null, true);
         },
         postAuthenticate: async function postAuthenticate(socket: any, data: any) {
@@ -50,20 +61,6 @@ module.exports = async (io: socket.Socket)=>{
     });
 
     io.on("connection", async (socket: any)=>{
-        try {
-            let user = await db.getUserByToken(socket.token);
-            if(!user) throw messages.UNAUTHORIZED;
-            if(user.banned) throw messages.BANNED;
-            let validatedStatus = updateCustomStatus.parse({status: 2});
-            user.status = <number>validatedStatus.status;
-            for(let server of user.servers){
-                io.to(server).emit('updateCustomStatus', {id: user.id, server: server, ...validatedStatus});
-            }
-            io.to(user.id).emit('updateCustomStatus', {...validatedStatus});
-            await db.updateUser(user);
-        } catch(err) {
-            console.log(err);
-        }
         socket.on('disconnect', async()=>{
             try {
                 let user = await db.getUserByToken(socket.token);
