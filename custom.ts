@@ -13,6 +13,7 @@ declare module 'express-serve-static-core' {
         notFound(): void;
         notAuthorized(): void;
         banned(): void;
+        forbridden(): void;
         authError(data: any): void;
     }
 }

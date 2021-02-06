@@ -16,6 +16,7 @@ const io = socketIO(server, {
     transports: [ 'websocket', 'polling' ]
 });
 
+
 require("./io")(io);
 
 // EXPRESS SECTION
@@ -65,6 +66,11 @@ response.notAuthorized = function() {
 response.banned = function() {
     this.status(401).json({message: messages.BANNED});
 }
+
+response.forbridden = function() {
+    this.status(403).json({message: messages.FORBRIDDEN});
+}
+
 
 response.error = function(message) {
     this.status(403).json({message});

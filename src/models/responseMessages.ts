@@ -9,5 +9,6 @@ export const messages = {
     SERVER_OWNER: "you are server owner",
     CAPTCHA_ERROR: "captcha failed",
     EMAIL_CLAIMED: "email claimed",
-    INVALID_DATA: "invalid credentials"
+    INVALID_DATA: "invalid credentials",
+    FORBRIDDEN: "you don't has permission"
 }

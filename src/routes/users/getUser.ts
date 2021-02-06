@@ -13,7 +13,8 @@ export default async function(req: express.Request, res: express.Response) {
                 let model = await f.getOnly(user, 'id username avatarURL banned bot status customStatus badges deleted');
                 return res.success(model);
             } else {
-                return res.success(user);
+                let model = await f.without(user, 'password token');
+                return res.success(model);
             }
         }
     } catch(err) {

@@ -55,3 +55,16 @@ export async function getOnly(model: any, whatToGet: string){
     }
     return toReturn;
 }
+
+export async function without(model: any, without: string){
+    if(without == "" || model == {}) return {};
+    let keys = await without.split(" ");
+    let toReturn: any = {};
+    for(let num in keys){
+        if(model[keys[num]]){
+            delete model[keys[num]];
+        }
+    }
+    return model;
+}
+

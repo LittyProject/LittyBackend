@@ -7,7 +7,11 @@ export const userSchema = z.object({
     avatarURL: z.string().url({message: "Must contains web URL"}),
     tag: z.string().length(4, {message: "Must be 4 characters long"}),
 
-    banned: z.boolean(),
+    badges: z.array(z.object({
+        text: z.string(),
+        icon: z.string(),
+        link: z.string().url({message: "Must contains web URL"}).optional()
+    })),
     bot: z.boolean(),
     createdBy: z.string(),
     createdAt: z.date(),
@@ -15,7 +19,6 @@ export const userSchema = z.object({
     customStatus: z.string().min(0).max(50, {message: "Must be 50 or fewer characters long"}),
     status: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 15"}),
     onlineStatus: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 15"}),
-    badges: z.array(z.number()),
 
     email: z.string().email(),
     password: z.string().min(8, {message: "Must be 8 or more characters long"}).max(32, {message: "Must be 32 or fewer characters long"}),
@@ -42,10 +45,12 @@ export const guildMemberSchema = z.object({
     customStatus: z.string().min(0).max(50, {message: "Must be 50 or fewer characters long"}),
     status: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 14"}),
     onlineStatus: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 15"}),
-    badges: z.array(z.number()),
-
+    badges: z.array(z.object({
+        text: z.string(),
+        icon: z.string(),
+        link: z.string().url({message: "Must contains web URL"}).optional()
+    })),
     deleted: z.boolean(),
-
     perm: z.number()
 });
 
@@ -84,24 +89,31 @@ export const updateCustomStatus = z.object({
     onlineStatus: z.number().optional()
 });
 
-export const userUpdate = z.object({
-    email: z.string().email(),
-    password: passwordSchema,
-    username: z.string().min(3, {message: "Must be 3 or more characters long"}).max(24, {message: "Must be 24 or fewer characters long"}),
-    tag: z.string().length(4, {message: "Must be 4 characters long"}),
-}).refine(x => x.tag.toLowerCase().match(/[0-9ABCDEF]/g), {
-    message: 'Tag can be only created with characters: 0-9, A-F',
-    path: ['tag']
-}).refine(async x => {
-    let user = await db.getUserByUsernameAndTag(x.username, x.tag);
-    if(user) {
-        return false;
-    }
-    return true;
-}, {
-    message: 'Found user with this same username and tag',
-    path: ['username', 'tag']
+export const updateBadges = z.object({
+   badges: z.array(z.object({
+       text: z.string(),
+       icon: z.string(),
+       link: z.string().url({message: "Must contains web URL"}).optional()
+   }))
 });
+
+export const userUpdate = z.object({
+    email: z.string().email().optional(),
+    password: passwordSchema.optional(),
+    username: z.string().min(3, {message: "Must be 3 or more characters long"}).max(24, {message: "Must be 24 or fewer characters long"}),
+    tag: z.string().length(4, {
+        message: "Must be 4 characters long"}),
+    }).refine(x => x.tag.toLowerCase().match(/[0-9ABCDEF]/g), {
+        message: 'Tag can be only created with characters: 0-9, A-F',
+        path: ['tag']
+    }).refine(async x => {
+        let user = await db.getUserByUsernameAndTag(x.username, x.tag);
+        return !user;
+    }, {
+        message: 'Found user with this same username and tag',
+        path: ['username', 'tag']
+    }
+);
 
 export type User = z.infer<typeof userSchema>;
 export type Member = z.infer<typeof guildMemberSchema>;
