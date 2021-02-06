@@ -42,14 +42,18 @@ export default async function(req: express.Request, res: express.Response, next:
                 await db.updateUser(user);
             }
 
-            const address = req.connection.remoteAddress;
-            if (!address || !ipRangeCheck(address, cloudFlareIps)) {
-                res.banned();
-            } else {
-                if(await db.isIPBanned(user.lastIP)) return res.banned();
-                req.user = user;
-                next();
-            }
+            // const address = req.connection.remoteAddress;
+            // console.log(address);
+            // if (!address || ipRangeCheck(address, cloudFlareIps)) {
+            //     res.banned();
+            // } else {
+            //     if(await db.isIPBanned(user.lastIP)) return res.banned();
+            //     req.user = user;
+            //     next();
+            // }
+            //if(await db.isIPBanned(user.lastIP)) return res.banned();
+            req.user = user;
+            next();
         }
 
 

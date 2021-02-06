@@ -105,6 +105,7 @@ export const updateBadges = z.object({
 export const userUpdate = z.object({
     email: z.string().email().optional(),
     password: passwordSchema.optional(),
+    avatarURL: z.string().url({message: "Must contains web URL"}).optional(),
     username: z.string().min(3, {message: "Must be 3 or more characters long"}).max(24, {message: "Must be 24 or fewer characters long"}),
     tag: z.string().length(4, {
         message: "Must be 4 characters long"}),
