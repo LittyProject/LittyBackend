@@ -3,9 +3,9 @@ import db from "../../db";
 
 export default async function(req: express.Request, res: express.Response) {
     try {
-        if(!req.params.id) return res.notFound();
+        if(!req.params.code) return res.notFound();
 
-        let invite = await db.getInvite(req.params.id);
+        let invite = await db.getInvite(req.params.code);
         if(!invite) {
             return res.notFound();
         } else {

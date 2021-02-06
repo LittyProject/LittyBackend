@@ -5,7 +5,7 @@ import getInvite from "./getInvite";
 const router = express.Router();
 
 
-router.use('/:id', rateLimits(20, 100));
-router.route("/:id").get(getInvite);
+router.use('/:code', rateLimits(20, 100));
+router.route("/:code").get(getInvite);
 
 module.exports = router;

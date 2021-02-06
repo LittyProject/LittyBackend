@@ -55,35 +55,43 @@ https://swagger.io/docs/specification/authentication/bearer-authentication/
 
 ## API
 
-| Method \| Path | Required Auth | Example body | Ratelimit (req/time) |
-|:-:|:-:|:-:|:-:|
-| POST \| `/auth/login` | no | `{"username": string, "password": string}` |  |
-| POST \| `/auth/register` | no | `{"username": string, "password": string, "confirmPassword": string, "email": string, "hcaptcha": string}` |  |
-| GET \| `/users/:id` | yes |  | 100/20s |
-| PUT \| `/users/:id/edit` | yes | `{"username": string, "password": string, "tag": string, "email": string}` | 5/10m |
-| GET \| `/servers/:id` | yes |  | 100/20s | 
-| POST \| `/servers` | yes | `{"name": string}` | 5/3m |
-| POST \| `/servers/:id/join` | yes | `{}` | 30/3m |
-| DELETE \| `/servers/:id/leave` | yes |  | 30/3m |
+| Method \| Path | Required Auth | Example body | Ratelimit (req/time) | Permission |
+|:-:|:-:|:-:|:-:|:-:|
+| - | - | Auth | - | - |
+| POST \| `/auth/login` | no | `{"username": string, "password": string}` |  | 0 |
+| POST \| `/auth/register` | no | `{"username": string, "password": string, "confirmPassword": string, "email": string, "hcaptcha": string}` |  | 0 |
+| - | - | Users | - | - |
+| GET \| `/users/:id` | yes |  | 100/20s | 0 |
+| PUT \| `/users/:id/edit` | yes | `{"username": string, "password": string, "tag": string, "email": string}` | 5/10m | 0 |
+| POST \| `/users/:id/badges` | yes | `{"badges": [{"text": string, "icon": string, "url": string}, ...]}` | 50/1m | 3 |
+| - | - | Servers | - | - |
+| GET \| `/servers/:id` | yes |  | 100/20s | 0 |
+| GET \| `/servers/:id/channels` | yes |  | 100/20s | 0 |
+| GET \| `/servers/:id/channels/:channel` | yes |  | 100/20s | 0 |
+| POST \| `/servers` | yes | `{"name": string}` | 5/3m | 0 |
+| POST \| `/servers/:id/join` | yes | `{}` | 30/3m | 0 |
+| DELETE \| `/servers/:id/leave` | yes |  | 30/3m | 0 |
+| - | - | Invite | - | - |
+| GET \| `/invite/:code` | yes |  | 100/20s | 0 |
 
 ## User Status List
 | ID | Real Status Name |
 |:-:|:-:|
-| 0 | Offline |
-| 1 | Online |
-| 2 | Idle |
-| 3 | Dnd |
-| 4 | Coding |
-| 5 | Reading |
-| 6 | Learning |
-| 7 | Shoping |
-| 8 | Hacking |
-| 9 | Singing |
-| 10 | Playing |
-| 11 | Watching |
-| 12 | Listening |
-| 13 | Competing |
-| 14 | Exercising |
+| 1 | Offline |
+| 2 | Online |
+| 3 | Idle |
+| 4 | Dnd |
+| 5 | Coding |
+| 6 | Reading |
+| 7 | Learning |
+| 8 | Shopping |
+| 9 | Hacking |
+| 10 | Singing |
+| 11 | Playing |
+| 12 | Watching |
+| 13 | Listening |
+| 14 | Competing |
+| 15 | Exercising |
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
