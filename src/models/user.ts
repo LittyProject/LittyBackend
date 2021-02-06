@@ -11,6 +11,7 @@ export const userSchema = z.object({
     badges: z.array(z.object({
         text: z.string(),
         icon: z.string(),
+        color: z.string().optional(),
         link: z.string().url({message: "Must contains web URL"}).optional()
     })),
     bot: z.boolean(),
@@ -50,6 +51,7 @@ export const guildMemberSchema = z.object({
     badges: z.array(z.object({
         text: z.string(),
         icon: z.string(),
+        color: z.string().optional(),
         link: z.string().url({message: "Must contains web URL"}).optional()
     })),
     deleted: z.boolean(),
@@ -95,6 +97,7 @@ export const updateBadges = z.object({
    badges: z.array(z.object({
        text: z.string(),
        icon: z.string(),
+       color: z.string().optional(),
        link: z.string().url({message: "Must contains web URL"}).optional()
    }))
 });
