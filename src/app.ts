@@ -2,6 +2,7 @@ import express, {response} from 'express';
 import bodyParser from 'body-parser';
 import { messages } from './models/responseMessages';
 import cors from 'cors';
+import db from "./db";
 const methodOverride = require("method-override");
 const app = express();
 
@@ -45,7 +46,7 @@ app.use("/api/", require("./routes/index"));
 app.use("/", require("./routes/index"));
 
 const PORT = process.env.PORT || 1920;
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
     console.log('Litty is running on port: '+PORT);
 });
 

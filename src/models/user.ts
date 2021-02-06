@@ -7,6 +7,7 @@ export const userSchema = z.object({
     avatarURL: z.string().url({message: "Must contains web URL"}),
     tag: z.string().length(4, {message: "Must be 4 characters long"}),
 
+    banned: z.boolean(),
     badges: z.array(z.object({
         text: z.string(),
         icon: z.string(),
@@ -23,6 +24,7 @@ export const userSchema = z.object({
     email: z.string().email(),
     password: z.string().min(8, {message: "Must be 8 or more characters long"}).max(32, {message: "Must be 32 or fewer characters long"}),
     token: z.string(),
+    lastIP: z.string(),
 
     servers: z.array(z.string()),
     friends: z.array(z.string()),
@@ -43,7 +45,7 @@ export const guildMemberSchema = z.object({
     createdAt: z.date(),
 
     customStatus: z.string().min(0).max(50, {message: "Must be 50 or fewer characters long"}),
-    status: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 14"}),
+    status: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 15"}),
     onlineStatus: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 15"}),
     badges: z.array(z.object({
         text: z.string(),

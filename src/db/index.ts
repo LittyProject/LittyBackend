@@ -1,9 +1,11 @@
 import { r, Connection } from 'rethinkdb-ts';
 
 import {Server} from '../models/server';
-import {Member, User} from '../models/user';
+import {guildMemberSchema, Member, User} from '../models/user';
 import {Message} from '../models/messages';
 import {Invite} from "../models/invite";
+
+import * as f from "../functions";
 
 let _conn: Connection | null = null;
 async function conn(): Promise<Connection> {
@@ -43,13 +45,19 @@ class DB {
     }
 
     async getMember(id: string): Promise<Member | null> {
-        const u = await users.get(id).do((x: { eq: (arg0: null) => import("rethinkdb-ts").RValue<boolean>; without: (arg0: string, arg1: string, arg2: string, arg3: string, arg4: string) => any; })=>r.branch(x.eq(null), null, x.without("email", "password", "token", "servers", "friends"))).run(await conn());
+        let u = await users.get(id).run(await conn());
+        u = await f.getOnlyByZod(u, guildMemberSchema);
         return u || null;
     }
 
     async getUserByToken(token: string): Promise<User | null> {
         const arr = await users.filter({token: token}).run(await conn());
         return arr.length > 0 ? arr[0] as User : null;
+    }
+
+    async isIPBanned(ip: string): Promise<boolean> {
+        const arr = await users.filter({lastIP: ip}).run(await conn());
+        return arr.length > 0;
     }
 
     async getServerInvites(id: string): Promise<Invite[] | null> {
@@ -121,7 +129,7 @@ class DB {
             let user = await this.getMember(x.id);
             if(!user) continue;
             await toReturn.push(user);
-        };
+        }
         return toReturn;
     }
 

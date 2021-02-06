@@ -1,4 +1,6 @@
 import bcrypt from 'bcrypt';
+import {guildMemberSchema} from "./models/user";
+import {ZodObject} from "zod";
 const uniqid = require('uniqid');
 
 export function genID(): string{
@@ -17,8 +19,8 @@ export async function compareHash(string: string, password: string): Promise<boo
 export async function hashPassword(string: string): Promise<string> {
     return new Promise<string>((res, rej) => {
         bcrypt.genSalt(10, async function(err, salt) {
-            bcrypt.hash(string, salt, async function(err, hash) {
-                if(err) rej(err);
+            await bcrypt.hash(string, salt, async function (err, hash) {
+                if (err) rej(err);
                 else res(hash);
             });
         });
@@ -55,6 +57,23 @@ export async function getOnly(model: any, whatToGet: string){
     }
     return toReturn;
 }
+
+export async function getOnlyByZod(model: any, whatToGet: any){
+    if(!whatToGet || model == {}) return {};
+    let keys = [];
+    for(let key in whatToGet.toJSON().shape){
+        for(let key2 in whatToGet.toJSON().shape[key]){
+            keys.push(key2.toString());
+        }
+    }
+    let toReturn: any = {};
+    for(let num in keys){
+        toReturn[keys[num]] = model[keys[num]];
+    }
+    return toReturn;
+}
+
+
 
 export async function without(model: any, without: string){
     if(without == "" || model == {}) return {};
