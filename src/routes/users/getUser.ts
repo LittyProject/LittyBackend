@@ -10,7 +10,7 @@ export default async function(req: express.Request, res: express.Response) {
             return res.notFound();
         } else {
             if(req.params.id !== "@me" && req.params.id !== req.user.id) {
-                let model = await f.getOnly(user, 'id username avatarURL banned bot status customStatus badges deleted');
+                let model = await f.getOnly(user, 'id username avatarURL banned bot status customStatus badges deleted tag');
                 return res.success(model);
             } else {
                 let model = await f.without(user, 'password token');
