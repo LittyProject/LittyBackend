@@ -8,12 +8,12 @@ export default async function(req: express.Request, res: express.Response) {
         if(!req.user) return res.notAuthorized;
         const user = await db.getUser(req.params.id == "@me" ? req.user.id : req.params.id);
         if(user) {
-            if(req.params.id !== "@me" && req.params.id !== req.user.id) {
-                let model = await f.getOnlyByZod(user, guildMemberSchema);
-                return res.success(model);
-            } else {
-                let model = await f.without(user, 'password token');
-                return res.success(model);
+            if(user.friends.includes(req.params.userId) || user.friendRequests.includes(req.params.userId)) {
+                const friend = await db.getUser(req.params.userId);
+                if(friend) {
+                    let model = await f.getOnlyByZod(friend, guildMemberSchema);
+                    return res.success(model);
+                }
             }
         }
         return res.notFound();

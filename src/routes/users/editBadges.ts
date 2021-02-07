@@ -7,9 +7,7 @@ export default async function(req: express.Request, res: express.Response) {
     try {
         if(!req.user) return res.notAuthorized;
         let user = await db.getUser(req.params.id);
-        if(!user) {
-            return res.notFound();
-        } else {
+        if(user) {
             let model = updateBadges.parse(req.body);
             user = Object.assign(user, model);
             await db.updateUser(user);
@@ -19,6 +17,7 @@ export default async function(req: express.Request, res: express.Response) {
             SocketServer.to(user.id).emit('badgeUpdate', model);
             return res.success(model);
         }
+        return res.notFound();
     } catch(err) {
         return res.error(err);
     }

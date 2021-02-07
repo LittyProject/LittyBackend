@@ -29,6 +29,9 @@ export const userSchema = z.object({
 
     servers: z.array(z.string()),
     friends: z.array(z.string()),
+    friendRequests: z.array(z.string()),
+
+    disabled: z.boolean(),
     deleted: z.boolean(),
 
     perm: z.number()
@@ -55,6 +58,7 @@ export const guildMemberSchema = z.object({
         link: z.string().url({message: "Must contains web URL"}).optional()
     })),
     deleted: z.boolean(),
+    disabled: z.boolean(),
     perm: z.number()
 });
 

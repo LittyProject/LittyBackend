@@ -25,7 +25,8 @@ export default async function(req: express.Request, res: express.Response) {
                 createdAt: new Date()
             }],
             iconURL: process.env.cdnURL + "/def_server.png",
-            createdAt: new Date()
+            createdAt: new Date(),
+
         };
 
         const message: Message = {
