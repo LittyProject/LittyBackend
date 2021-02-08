@@ -6,25 +6,6 @@ import socket from "socket.io";
 import {updateCustomStatus} from "../models/user";
 import {presenceSchema} from "../models/application";
 
-async function saveMessage(io: socket.Socket, data: any): Promise<any>{
-    try {
-        let user = await db.getUser(data.user.id);
-        if(!user) return;
-        const msg: Message = {
-            id: f.genID(),
-            content: data.message,
-            authorId: user.id,
-            channelId: data.channelID,
-            createdAt: new Date()
-        };
-        let toSend: any = msg;
-        toSend.author = await db.getUser(msg.authorId);
-        let mess = await db.insertMessage(msg);
-        io.to(data.serverID).emit(`newMessage`, msg);
-    } catch(err) {
-        return console.log(err);
-    }
-}
 
 
 module.exports = async (io: socket.Socket)=>{
@@ -93,7 +74,7 @@ module.exports = async (io: socket.Socket)=>{
                }catch (err){
                    console.log(err);
                }
-               socket.emit("authenticated", true);
+               socket.emit("authenticated", f.without(app, "token bot"));
            }else{
                socket.emit("authentication_error", {type: "data", message: "Invalid Token Type"});
                socket.disconnect(true);
@@ -106,6 +87,20 @@ module.exports = async (io: socket.Socket)=>{
                 socket.disconnect(true);
             }
         }, 10000);
+        socket.on("applicationPresenceUpdate", async(data: any)=>{
+            if(!socket.auth && socket.type !=="APPLICATION") return;
+            const app = await db.getApplication(socket.token);
+            if(!app){
+                socket.emit("applicationPresenceUpdate", {type: "data", message: "Application not found"});
+                socket.disconnect(true);
+                return;
+            }
+            try{
+                io.to(app.owner).emit("userPresenceUpdate", {appName: app.name, owner: app.owner, ...data.data});
+            }catch (err){
+                console.log(err);
+            }
+        })
         socket.on('disconnect', async(d: any)=>{
             if(!socket.auth) return;
             if(socket.type==="BEARER"){
@@ -157,13 +152,6 @@ module.exports = async (io: socket.Socket)=>{
             }
         });
 
-        socket.on("createMessage", async (data: any)=>{
-            if(!socket.auth||socket.type !=="BEARER") return;
-            const user = await db.getUserByToken(socket.token);
-            if(!user) throw messages.UNAUTHORIZED;
-            if(user.banned) throw messages.BANNED;
-            await saveMessage(io, data);
-        });
 
         socket.on("createChannel", async (data: any)=>{
             if(!socket.auth||socket.type !=="BEARER") return;

@@ -30,6 +30,8 @@ export default async function(req: express.Request, res: express.Response) {
         };
 
         const message: Message = {
+            serverId: server.id,
+            type: "NORMAL",
             id: f.genID(),
             createdAt: new Date(),
             content: `Welcome **${req.user.username}#${req.user.tag}**!
@@ -43,10 +45,10 @@ Invite your friends and start this party right now!`,
         req.user.servers.push(server.id);
         await db.updateUser(req.user);
         await db.insertMessage(message);
-        res.success(server);
-
-        await SocketServer.in(req.user.id).emit("createServer", server);
-        return;
+        let s: any = server;
+        s.members =[await db.getMember(req.user.id)];
+        await SocketServer.to(req.user.id).emit("createServer", s);
+        return res.success(s);
     } catch (err) {
         return res.error(err)
     }
