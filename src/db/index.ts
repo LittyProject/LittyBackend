@@ -6,6 +6,7 @@ import {Message} from '../models/messages';
 import {Invite} from "../models/invite";
 
 import * as f from "../functions";
+import {Application} from "../models/application";
 
 let _conn: Connection | null = null;
 async function conn(): Promise<Connection> {
@@ -25,6 +26,7 @@ const invite = r.table('invites');
 const users = r.table('users');
 const messages = r.table('messages');
 const userAlive = r.table('checkUsers');
+const applications = r.table('applications');
 
 class DB {
     async conn(): Promise<Connection> {
@@ -53,6 +55,16 @@ class DB {
     async getUserByToken(token: string): Promise<User | null> {
         const arr = await users.filter({token: token}).run(await conn());
         return arr.length > 0 ? arr[0] as User : null;
+    }
+
+    async getUserApplications(id: string): Promise<Application[] | null> {
+        const arr = await applications.filter({owner: id}).run(await conn());
+        return arr.length > 0 ? arr as Application[] : null;
+    }
+
+    async getApplication(token: string): Promise<Application | null> {
+        const arr = await applications.filter({token: token}).run(await conn());
+        return arr.length > 0 ? arr[0] as Application : null;
     }
 
     async isIPBanned(ip: string): Promise<boolean> {

@@ -4,6 +4,7 @@ import * as f from "../functions";
 import {messages} from "../models/responseMessages";
 import socket from "socket.io";
 import {updateCustomStatus} from "../models/user";
+import {presenceSchema} from "../models/application";
 
 async function saveMessage(io: socket.Socket, data: any): Promise<any>{
     try {
@@ -27,58 +28,114 @@ async function saveMessage(io: socket.Socket, data: any): Promise<any>{
 
 
 module.exports = async (io: socket.Socket)=>{
-
-    require('socketio-auth')(io, {
-        authenticate: async function (socket: any, data: any, callback: any) {
-            const token = data.token;
-            const user = await db.getUserByToken(token);
-            if(!user) return callback(new Error(messages.UNAUTHORIZED));
-            if(user.banned) return callback(new Error(messages.BANNED));
-            socket.join(user.id);
-            for(let server of user.servers){
-                socket.join(server);
-            }
-            try {
-                let validatedStatus = updateCustomStatus.parse({status: user.onlineStatus});
-                user.status = <number>validatedStatus.status;
-                for(let server of user.servers){
-                    io.to(server).emit('updateCustomStatus', {id: user.id, server: server, ...validatedStatus});
-                }
-                io.to(user.id).emit('updateCustomStatus', {...validatedStatus});
-                await db.updateUser(user);
-            } catch(err) {
-                console.log(err);
-            }
-            return callback(null, true);
-        },
-        postAuthenticate: async function postAuthenticate(socket: any, data: any) {
-            socket.token = data.token;
-        },
-        disconnect: function disconnect(socket: any) {
-            console.log(socket.id + ' disconnected');
-        },
-        timeout: 5000
-    });
-
     io.on("connection", async (socket: any)=>{
-        socket.on('disconnect', async()=>{
-            try {
-                let user = await db.getUserByToken(socket.token);
-                if(!user) throw messages.UNAUTHORIZED;
-                if(user.banned) throw messages.BANNED;
-                user.onlineStatus = user.status;
-                let validatedStatus = updateCustomStatus.parse({status: 1});
-                user.status = <number>validatedStatus.status;
-                for(let server of user.servers){
-                    io.to(server).emit('updateCustomStatus', {id: user.id, server: server, ...validatedStatus});
+       socket.on("authentication", async (data:any) =>{
+           if(!data.token||!data.type){
+               socket.emit("authentication_error", {type: "data", message: "Invalid Data"});
+               socket.disconnect(true);
+               return;
+           }
+           const token = data.token;
+           const type = data.type;
+           if(type==="BEARER"){
+               const user = await db.getUserByToken(token);
+               if(!user) {
+                   socket.emit("authentication_error", {type: "data", message: "Invalid Token"});
+                   socket.disconnect(true);
+                   return;
+               }
+               if(user.banned){
+                   socket.emit("authentication_error", {type: "user", message: "User is banned"});
+                   socket.disconnect(true);
+                   return;
+               }
+               socket.auth=true;
+               socket.token=token;
+               socket.type=type;
+               socket.join(user.id);
+               for(let server of user.servers){
+                   socket.join(server);
+               }
+               try {
+                   let validatedStatus = updateCustomStatus.parse({status: user.onlineStatus});
+                   user.status = <number>validatedStatus.status;
+                   for(let server of user.servers){
+                       io.to(server).emit('updateCustomStatus', {id: user.id, server: server, ...validatedStatus});
+                   }
+                   io.to(user.id).emit('updateCustomStatus', {...validatedStatus});
+                   await db.updateUser(user);
+               } catch(err) {
+                   console.log(err);
+               }
+               socket.emit("authenticated", true);
+           }else if(type==="APPLICATION"){
+               if(!data.data){
+                   socket.emit("authentication_error", {type: "data", message: "Invalid Presence Data"});
+                   socket.disconnect(true);
+                   return;
+               }
+               const app = await db.getApplication(data.token);
+               if(!app){
+                   socket.emit("authentication_error", {type: "data", message: "Application not found"});
+                   socket.disconnect(true);
+                   return;
+               }
+               if(!presenceSchema.check(data.data)){
+                   socket.emit("authentication_error", {type: "data", message: "Invalid Presence Data"});
+                   socket.disconnect(true);
+                   return;
+               }
+               socket.auth=true;
+               socket.token=token;
+               socket.type=type;
+               try{
+                   io.to(app.owner).emit("userPresenceUpdate", {appName: app.name, owner: app.owner, ...data.data});
+               }catch (err){
+                   console.log(err);
+               }
+               socket.emit("authenticated", true);
+           }else{
+               socket.emit("authentication_error", {type: "data", message: "Invalid Token Type"});
+               socket.disconnect(true);
+               return;
+           }
+       });
+        setTimeout(function() {
+            if (!socket.auth) {
+                socket.emit("authentication_error", {type: "data", message: "Invalid authorization"});
+                socket.disconnect(true);
+            }
+        }, 10000);
+        socket.on('disconnect', async(d: any)=>{
+            if(!socket.auth) return;
+            if(socket.type==="BEARER"){
+                try {
+                    let user = await db.getUserByToken(socket.token);
+                    if(!user) throw messages.UNAUTHORIZED;
+                    if(user.banned) throw messages.BANNED;
+                    user.onlineStatus = user.status;
+                    let validatedStatus = updateCustomStatus.parse({status: 1});
+                    user.status = <number>validatedStatus.status;
+                    for(let server of user.servers){
+                        io.to(server).emit('updateCustomStatus', {id: user.id, server: server, ...validatedStatus});
+                    }
+                    io.to(user.id).emit('updateCustomStatus', {...validatedStatus});
+                    await db.updateUser(user);
+                } catch(err) {
+                    console.log(err);
                 }
-                io.to(user.id).emit('updateCustomStatus', {...validatedStatus});
-                await db.updateUser(user);
-            } catch(err) {
-                console.log(err);
+            }else if(socket.type==="APPLICATION"){
+                const app = await db.getApplication(socket.token);
+                if(!app)  return;
+                try{
+                    io.to(app.owner).emit("userPresenceUpdate", null);
+                }catch (err){
+                    console.log(err);
+                }
             }
         });
         socket.on("updateCustomStatus", async (data: any)=>{
+            if(!socket.auth||socket.type !=="BEARER") return;
             try {
                 let user = await db.getUserByToken(socket.token);
                 if(!user) throw messages.UNAUTHORIZED;
@@ -101,6 +158,7 @@ module.exports = async (io: socket.Socket)=>{
         });
 
         socket.on("createMessage", async (data: any)=>{
+            if(!socket.auth||socket.type !=="BEARER") return;
             const user = await db.getUserByToken(socket.token);
             if(!user) throw messages.UNAUTHORIZED;
             if(user.banned) throw messages.BANNED;
@@ -108,6 +166,7 @@ module.exports = async (io: socket.Socket)=>{
         });
 
         socket.on("createChannel", async (data: any)=>{
+            if(!socket.auth||socket.type !=="BEARER") return;
             const user = await db.getUserByToken(socket.token);
             if(!user) throw messages.UNAUTHORIZED;
             if(user.banned) throw messages.BANNED;
@@ -115,10 +174,12 @@ module.exports = async (io: socket.Socket)=>{
         });
 
         socket.on("memberJoinServer", async (data: any)=>{
+            if(!socket.auth||socket.type !=="BEARER") return;
             const user = await db.getUserByToken(socket.token);
             if(!user) throw messages.UNAUTHORIZED;
             if(user.banned) throw messages.BANNED;
             io.to(data.serverID).emit("newMember", data.channel);
         });
+
     });
 };

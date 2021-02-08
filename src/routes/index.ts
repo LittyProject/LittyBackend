@@ -5,6 +5,7 @@ router.use("/auth", require("./auth"));
 router.use("/users", require("./users"));
 router.use("/servers", require("./servers"));
 router.use("/invite", require("./invite"));
+router.use("/applications", require("./application"));
 
 /*
 router.use("", require(""));

@@ -6,24 +6,25 @@ import db from "./db";
 const methodOverride = require("method-override");
 const app = express();
 
+const corsWhitelist = [
+    'http://localhost:1920', 'http://localhost:8080', 'http://localhost:3001', 'http://localhost:3000/', 'http://192.168.8.42:8080'
+];
+
 // SOCKET.IO SECTION
 const http = require("http");
 const socketIO = require("socket.io");
 const server = http.createServer(app);
-const io = socketIO(server, {
-    cors: {
-        origin: '*',
-    },
-    transports: [ 'websocket', 'polling' ]
-});
+const io = socketIO({
+    perMessageDeflate: false,
+    pingTimeout: 60000,
+    path: "/gateway",
+    transports: ['websocket']
+}).listen(server);
+
 
 
 require("./io")(io);
 
-// EXPRESS SECTION
-const corsWhitelist = [
-    'http://localhost:1920', 'http://localhost:8080', 'http://localhost:3000', 'http://localhost:3000/', 'http://192.168.8.42:8080'
-];
 
 app.use(cors({
     origin: (origin, callback) => {
