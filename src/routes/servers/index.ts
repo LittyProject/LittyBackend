@@ -8,6 +8,7 @@ import getChannel from './getChannel';
 import joinServer from './joinServer';
 import leaveServer from './leaveServer';
 import createMessage from "./createMessage";
+import getMessages from "./getMessages";
 const router = express.Router();
 
 router.use('/:id', rateLimits(20, 100));
@@ -19,6 +20,7 @@ router.route("/:id/channels/:channel").get(checkAuth, getChannel);
 
 router.use('/:id/channels/:channel/messages', rateLimits(20, 100));
 router.route("/:id/channels/:channel/messages").post(checkAuth, createMessage);
+router.route("/:id/channels/:channel/messages").get(getMessages);
 
 router.use('/:id/join', rateLimits(180, 30));
 router.route("/:id/join").post(checkAuth, joinServer);

@@ -7,6 +7,7 @@ import {Invite} from "../models/invite";
 
 import * as f from "../functions";
 import {Application} from "../models/application";
+import {number} from "zod";
 
 let _conn: Connection | null = null;
 async function conn(): Promise<Connection> {
@@ -175,6 +176,25 @@ class DB {
     async getAllMessages(): Promise<Message[]> {
         return await messages.run(await conn());
     }
+
+    async getMessagesSince(serverID: string, channelID: string, from: number, to: number): Promise<Message[]> {
+        return messages.orderBy({index: "createdAt"}).filter(function (d: any) {
+            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('createdAt').during(new Date(from), new Date(to));
+        }).run(await conn());
+    }
+
+    async getMessagesAfter(serverID: string, channelID: string, time: number): Promise<Message[]> {
+        return messages.orderBy({index: "createdAt"}).filter(function (d: any) {
+            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('createdAt').toEpochTime().gt(time);
+        }).run(await conn());
+    }
+
+    async getMessagesBefore(serverID: string, channelID: string, time: number): Promise<Message[]> {
+        return messages.orderBy({index: "createdAt"}).filter(function (d: any) {
+            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('createdAt').toEpochTime().lt(time);
+        }).run(await conn());
+    }
+
 
     async updateMessage(message: Message | {id: string}): Promise<void> {
         await messages.get(message.id).update(message).run(await conn());
