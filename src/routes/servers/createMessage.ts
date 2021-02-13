@@ -20,21 +20,23 @@ export default async function(req: express.Request, res: express.Response) {
             if(!channel){
                 return res.notFound();
             }
+            let date = new Date();
             const msg: Message = {
                 type: req.body.type,
                 id: f.genID(),
+                timestamp: date.getTime(),
                 content: req.body.content,
                 authorId: req.user.id,
                 channelId: channel.id,
                 serverId: server.id,
-                createdAt: new Date()
+                createdAt: date
             };
             if(messageSchema.check(msg)){
                 let response;
                 switch (req.body.type){
                     case "NORMAL":
                         response = await db.insertMessage(msg);
-                        SocketServer.to(server.id).emit('messageCreate', {...response, type: "channel"});
+                        SocketServer.to(server.id).emit('messageCreate', {...response, typeChannel: "channel"});
                         return res.success(response);
                     default:
                         return res.error(messages.INVALID_DATA);

@@ -38,6 +38,7 @@ class DB {
                 password: process.env.DB_PASSWORD,
                 db: process.env.DB_DATABASE
             });
+            console.log("Database connected");
         }
         return _conn;
     }
@@ -126,6 +127,19 @@ class DB {
         return toReturn;
     }
 
+    async getUserServersWithMembers(userID: string): Promise<Server[] | null> {
+        let user = await this.getUser(userID);
+        if(!user) return [];
+        let toReturn: Server[] = [];
+        for(let x of user.servers) {
+            let server = await this.getServer(x);
+            server?.members = await this.getUsersOnServer(server.id);
+            if(!server) continue;
+            await toReturn.push(server);
+        }
+        return toReturn;
+    }
+
 
 
 
@@ -178,21 +192,33 @@ class DB {
     }
 
     async getMessagesSince(serverID: string, channelID: string, from: number, to: number): Promise<Message[]> {
-        return messages.orderBy({index: "createdAt"}).filter(function (d: any) {
-            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('createdAt').during(new Date(from), new Date(to));
+        return messages.orderBy({index: "timestamp"}).filter(function (d: any) {
+            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('timestamp').during(from, to);
         }).run(await conn());
     }
 
     async getMessagesAfter(serverID: string, channelID: string, time: number): Promise<Message[]> {
-        return messages.orderBy({index: "createdAt"}).filter(function (d: any) {
-            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('createdAt').toEpochTime().gt(time);
+        return messages.orderBy({index: "timestamp"}).filter(function (d: any) {
+            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('timestamp').gt(time);
         }).run(await conn());
     }
 
+    async getMessagesAfterLimit(serverID: string, channelID: string, time: number , limit: number): Promise<Message[]> {
+        return messages.orderBy({index: "timestamp"}).filter(function (d: any) {
+            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('timestamp').gt(time);
+        }).limit(limit).run(await conn());
+    }
+
     async getMessagesBefore(serverID: string, channelID: string, time: number): Promise<Message[]> {
-        return messages.orderBy({index: "createdAt"}).filter(function (d: any) {
-            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('createdAt').toEpochTime().lt(time);
+        return messages.orderBy({index: "timestamp"}).filter(function (d: any) {
+            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('timestamp').lt(time);
         }).run(await conn());
+    }
+
+    async getMessagesBeforeLimit(serverID: string, channelID: string, time: number , limit: number): Promise<Message[]> {
+        return messages.orderBy({index: "timestamp"}).filter(function (d: any) {
+            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('timestamp').lt(time);
+        }).limit(limit).run(await conn());
     }
 
 

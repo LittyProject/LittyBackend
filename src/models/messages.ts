@@ -5,6 +5,7 @@ export const messageSchema = z.object({
     content: z.string().min(1, {message: "Must be 1 or more characters long"}).max(1500, {message: "Must be 1500 or fewer characters long"}),
     authorId: z.string(),
     createdAt: z.date(),
+    timestamp: z.number(),
     serverId: z.string(),
     channelId: z.string(),
     type: z.string(),

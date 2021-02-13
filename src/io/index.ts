@@ -48,7 +48,10 @@ module.exports = async (io: socket.Socket)=>{
                } catch(err) {
                    console.log(err);
                }
+               let servers = await db.getUserServersWithMembers(user.id);
                socket.emit("authenticated", true);
+               socket.emit("setUser", await f.without(user, "password token lastIP servers"));
+               socket.emit("setServers", servers);
            }else if(type==="APPLICATION"){
                if(!data.data){
                    socket.emit("authentication_error", {type: "data", message: "Invalid Presence Data"});
