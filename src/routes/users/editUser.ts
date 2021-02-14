@@ -20,7 +20,7 @@ export default async function(req: express.Request, res: express.Response) {
                 user = Object.assign(user, model);
                 await db.updateUser(user);
                 for(let server of user.servers){
-                    SocketServer.to(server).emit('userUpdate', {id: user.id, server: server, data: {...model}});
+                    SocketServer.to(server).emit('memberUpdate', {id: user.id, server: server, data: {...model}});
                 }
                 SocketServer.to(user.id).emit('userUpdate', model);
                 return res.success(user);

@@ -38,19 +38,21 @@ export default async function(req: express.Request, res: express.Response) {
             createdBy: "",
             createdAt: new Date(),
 
-            customStatus: "",
-            status: 0,
-            badges: [],
+            customStatus: "Witaj! Jestem tu nowy/a",
+            status: 15,
+            onlineStatus: 15,
+            flags: [],
 
             email: credentials.email,
             password: await f.hashPassword(credentials.password),
             token: f.createID(40),
+            lastIP: '',
 
             servers: [],
+            friendRequests: [],
             friends: [],
+            disabled: false,
             deleted: false,
-
-            perm: 0
         };
 
         console.log(user);

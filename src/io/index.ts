@@ -37,21 +37,21 @@ module.exports = async (io: socket.Socket)=>{
                for(let server of user.servers){
                    socket.join(server);
                }
-               try {
-                   let validatedStatus = updateCustomStatus.parse({status: user.onlineStatus});
-                   user.status = <number>validatedStatus.status;
-                   for(let server of user.servers){
-                       io.to(server).emit('updateCustomStatus', {id: user.id, server: server, ...validatedStatus});
-                   }
-                   io.to(user.id).emit('updateCustomStatus', {...validatedStatus});
-                   await db.updateUser(user);
-               } catch(err) {
-                   console.log(err);
-               }
                let servers = await db.getUserServersWithMembers(user.id);
                socket.emit("authenticated", true);
                socket.emit("setUser", await f.without(user, "password token lastIP servers"));
                socket.emit("setServers", servers);
+               try {
+                   let validatedStatus = updateCustomStatus.parse({status: user.onlineStatus});
+                   user.status = <number>validatedStatus.status;
+                   for(let server of user.servers){
+                       io.to(server).emit('memberUpdateStatus', {id: user.id, server: server, ...validatedStatus});
+                   }
+                   io.to(user.id).emit('userUpdateStatus', {...validatedStatus});
+                   await db.updateUser(user);
+               } catch(err) {
+                   console.log(err);
+               }
            }else if(type==="APPLICATION"){
                if(!data.data){
                    socket.emit("authentication_error", {type: "data", message: "Invalid Presence Data"});
@@ -115,9 +115,9 @@ module.exports = async (io: socket.Socket)=>{
                     let validatedStatus = updateCustomStatus.parse({status: 1});
                     user.status = <number>validatedStatus.status;
                     for(let server of user.servers){
-                        io.to(server).emit('updateCustomStatus', {id: user.id, server: server, ...validatedStatus});
+                        io.to(server).emit('memberUpdateStatus', {id: user.id, server: server, ...validatedStatus});
                     }
-                    io.to(user.id).emit('updateCustomStatus', {...validatedStatus});
+                    io.to(user.id).emit('userUpdateStatus', {...validatedStatus});
                     await db.updateUser(user);
                 } catch(err) {
                     console.log(err);
@@ -132,7 +132,7 @@ module.exports = async (io: socket.Socket)=>{
                 }
             }
         });
-        socket.on("updateCustomStatus", async (data: any)=>{
+        socket.on("userUpdateStatus", async (data: any)=>{
             if(!socket.auth||socket.type !=="BEARER") return;
             try {
                 let user = await db.getUserByToken(socket.token);
@@ -146,9 +146,9 @@ module.exports = async (io: socket.Socket)=>{
                     user.status = validatedStatus.status;
                 }
                 for(let server of user.servers){
-                    io.to(server).emit('updateCustomStatus', {id: user.id, server: server, ...validatedStatus});
+                    io.to(server).emit('memberUpdateStatus', {id: user.id, server: server, ...validatedStatus});
                 }
-                io.to(user.id).emit('updateCustomStatus', {...validatedStatus});
+                io.to(user.id).emit('userUpdateStatus', {...validatedStatus});
                 await db.updateUser(user);
             } catch(err) {
                 console.log(err);

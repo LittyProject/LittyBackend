@@ -1,5 +1,6 @@
 import * as z from 'zod';
 import db from '../db';
+import {userFlags} from "./enum";
 
 export const userSchema = z.object({
     id: z.string(),
@@ -8,12 +9,7 @@ export const userSchema = z.object({
     tag: z.string().length(4, {message: "Must be 4 characters long"}),
 
     banned: z.boolean(),
-    badges: z.array(z.object({
-        text: z.string(),
-        icon: z.string(),
-        color: z.string().optional(),
-        link: z.string().url({message: "Must contains web URL"}).optional()
-    })),
+    flags: z.array(z.enum(userFlags as [string, ...string[]])),
     bot: z.boolean(),
     createdBy: z.string(),
     createdAt: z.date(),
@@ -33,8 +29,6 @@ export const userSchema = z.object({
 
     disabled: z.boolean(),
     deleted: z.boolean(),
-
-    perm: z.number()
 });
 
 export const guildMemberSchema = z.object({
@@ -51,16 +45,14 @@ export const guildMemberSchema = z.object({
     customStatus: z.string().min(0).max(50, {message: "Must be 50 or fewer characters long"}),
     status: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 15"}),
     onlineStatus: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 15"}),
-    badges: z.array(z.object({
-        text: z.string(),
-        icon: z.string(),
-        color: z.string().optional(),
-        link: z.string().url({message: "Must contains web URL"}).optional()
-    })),
+    flags: z.array(z.enum(userFlags as [string, ...string[]])),
     deleted: z.boolean(),
     disabled: z.boolean(),
-    perm: z.number()
 });
+
+export const updateFlags = z.object({
+    flags: z.array(z.enum(userFlags as [string, ...string[]])),
+})
 
 const passwordSchema = z.string().min(8).max(32)
     .refine(x => /[0-9]/g.test(x), {message: 'one number'});
@@ -97,14 +89,6 @@ export const updateCustomStatus = z.object({
     onlineStatus: z.number().optional()
 });
 
-export const updateBadges = z.object({
-   badges: z.array(z.object({
-       text: z.string(),
-       icon: z.string(),
-       color: z.string().optional(),
-       link: z.string().url({message: "Must contains web URL"}).optional()
-   }))
-});
 
 export const userUpdate = z.object({
     email: z.string().email().optional(),

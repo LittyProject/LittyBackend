@@ -12,12 +12,16 @@ export default async function(req: express.Request, res: express.Response) {
         if(!req.user) return res.notAuthorized();
         if(req.user.servers.length >= 50) return res.error(messages.TOO_MUCH_SERVERS);
 
+        if(!serverEditSchema.check(req.body)){
+            return res.error("invalid data");
+        }
         let serverInfo = serverEditSchema.parse(req.body);
 
         const server: Server = {
             id: f.genID(),
             name: serverInfo.name,
             ownerId: req.user.id,
+            flags: [],
             banList: [],
             channels: [{
                 id: f.genID(),
@@ -28,12 +32,13 @@ export default async function(req: express.Request, res: express.Response) {
             createdAt: new Date(),
 
         };
-
+        let date = new Date();
         const message: Message = {
             serverId: server.id,
             type: "NORMAL",
             id: f.genID(),
-            createdAt: new Date(),
+            createdAt: date,
+            timestamp: date.getTime(),
             content: `Welcome **${req.user.username}#${req.user.tag}**!
 This is your own Litty server named **${server.name}**.
 Invite your friends and start this party right now!`,

@@ -9,8 +9,8 @@ export default async function(req: express.Request, res: express.Response) {
     try {
         if(!req.params.id) return res.notFound();
         if(!req.params.channel) return res.notFound();
-        // if(!req.user) return res.notAuthorized();
-        // if(!req.user.servers.includes(req.params.id)) return res.forbridden();
+        if(!req.user) return res.notAuthorized();
+        if(!req.user.servers.includes(req.params.id)) return res.notFound();
 
         let server = await db.getServer(req.params.id);
         if(!server) {

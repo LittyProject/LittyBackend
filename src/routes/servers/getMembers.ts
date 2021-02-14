@@ -11,7 +11,8 @@ export default async function(req: express.Request, res: express.Response) {
         if(!server) {
             return res.notFound();
         } else {
-            return res.success(server.channels);
+            const members = await db.getUsersOnServer(req.params.id);
+            return res.success(members);
         }
     } catch(err) {
         return res.error(err);
