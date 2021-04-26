@@ -1,6 +1,7 @@
 import express, {response} from 'express';
 import bodyParser from 'body-parser';
 import { messages } from './models/responseMessages';
+import cors from 'cors';
 import db from "./db";
 const methodOverride = require("method-override");
 const app = express();
@@ -24,6 +25,13 @@ const io = socketIO({
 require("./io")(io);
 
 
+app.use(cors({
+    origin: (origin, callback) => {
+        if(!origin) callback(null, true);
+        else if(!config.cors.includes(origin)) callback(new Error('cors origin not allowed: ' + origin), false);
+        else callback(null, true);
+    }
+}));
 
 app.use((req, res, next)=>{
     console.log(`[${req.method}] ${req.path}`);
