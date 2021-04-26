@@ -3,3 +3,5 @@ build/
 cdn/
 src-idk/
 .env
+
+config.json

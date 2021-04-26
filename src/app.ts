@@ -7,9 +7,7 @@ const methodOverride = require("method-override");
 const app = express();
 db.conn();
 
-const corsWhitelist = [
-    'http://localhost:1920', 'http://localhost:8080', 'http://192.168.8.142:8080', 'http://localhost:8081', 'http://localhost:3001', 'http://localhost:3000/', 'http://192.168.8.42:8080'
-];
+const config = require('../config.json');
 
 // SOCKET.IO SECTION
 const http = require("http");
@@ -30,7 +28,7 @@ require("./io")(io);
 app.use(cors({
     origin: (origin, callback) => {
         if(!origin) callback(null, true);
-        else if(!corsWhitelist.includes(origin)) callback(new Error('cors origin not allowed: ' + origin), false);
+        else if(!config.cors.includes(origin)) callback(new Error('cors origin not allowed: ' + origin), false);
         else callback(null, true);
     }
 }));
