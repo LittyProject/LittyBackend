@@ -13,6 +13,7 @@ let _conn: Connection | null = null;
 async function conn(): Promise<Connection> {
     if (_conn == null) {
         console.log("Database connected");
+        // @ts-ignore
         _conn = await r.connect({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
@@ -37,6 +38,7 @@ class DB {
     async conn(): Promise<Connection> {
         if (_conn == null) {
             console.log("Database connected");
+            // @ts-ignore
             _conn = await r.connect({
                 host: process.env.DB_HOST,
                 user: process.env.DB_USER,
@@ -144,6 +146,7 @@ class DB {
         let toReturn: Server[] = [];
         for(let x of user.servers) {
             let server = await this.getServer(x);
+            // @ts-ignore
             server?.members = await this.getUsersOnServer(server.id);
             if(!server) continue;
             await toReturn.push(server);
@@ -161,7 +164,9 @@ class DB {
 
     async getServerOnlines(id: string): Promise<any | null>{
         let members = await this.getUsersOnServer(id);
+        // @ts-ignore
         let online = members.filter(a=>a.status>1).length;
+        // @ts-ignore
         let offline = members.filter(a=>a.status<2).length;
         return {online: online, offline: offline};
     }

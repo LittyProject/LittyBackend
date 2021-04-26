@@ -12,7 +12,8 @@
   "scripts": {
     "tsc": "tsc --outDir ./build",
     "start": "ts-node-dev --respawn --transpile-only ./src/index.ts",
-    "prod": "tsc --outDir ./build && node ./build/src/index.js"
+    "prod": "tsc --outDir ./build && node ./build/src/index.js",
+    "pm2": "pm2 start ./src/index.ts --watch"
   },
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
