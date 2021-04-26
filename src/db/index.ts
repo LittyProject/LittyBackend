@@ -12,12 +12,16 @@ import {number} from "zod";
 let _conn: Connection | null = null;
 async function conn(): Promise<Connection> {
     if (_conn == null) {
+        console.log("Database connected");
         _conn = await r.connect({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
-            db: process.env.DB_DATABASE
+            db: process.env.DB_DATABASE,
+            port: process.env.DB_PORT
         });
+        console.log(r.tableList());
+        console.log("Database connected");
     }
     return _conn;
 }
@@ -25,18 +29,20 @@ async function conn(): Promise<Connection> {
 const servers = r.table('servers');
 const invite = r.table('invites');
 const users = r.table('users');
-const messages = r.table('messages');
+const messages = r.table('messages');//
 const userAlive = r.table('checkUsers');
 const applications = r.table('applications');
 
 class DB {
     async conn(): Promise<Connection> {
         if (_conn == null) {
+            console.log("Database connected");
             _conn = await r.connect({
                 host: process.env.DB_HOST,
                 user: process.env.DB_USER,
                 password: process.env.DB_PASSWORD,
-                db: process.env.DB_DATABASE
+                db: process.env.DB_DATABASE,
+                port: process.env.DB_PORT
             });
             console.log("Database connected");
         }
@@ -111,6 +117,11 @@ class DB {
         return user;
     }
 
+    async insertInvite(invitee: Invite): Promise<Invite> {
+        await invite.insert(invitee).run(await conn());
+        return invitee;
+    }
+
     async updateUser(user: User | {id: string}): Promise<void> {
         await users.get(user.id).update(user).run(await conn());
     }
@@ -138,6 +149,21 @@ class DB {
             await toReturn.push(server);
         }
         return toReturn;
+    }
+
+    async getServerWithMembers(s: string): Promise<any | null> {
+        let server :any  = await this.getServer(s);
+        if(!server) return null;
+        server.members = await this.getUsersOnServer(server.id);
+        return server;
+    }
+
+
+    async getServerOnlines(id: string): Promise<any | null>{
+        let members = await this.getUsersOnServer(id);
+        let online = members.filter(a=>a.status>1).length;
+        let offline = members.filter(a=>a.status<2).length;
+        return {online: online, offline: offline};
     }
 
 
@@ -168,6 +194,12 @@ class DB {
         return await servers.run(await conn());
     }
 
+    async getExploreServers(): Promise<any[]> {
+        return await servers.filter(function (d: any) {
+            return d('flags').contains('PUBLIC')
+        }).without('banList', 'roles', 'channels').run(await conn());
+    }
+
     async updateServer(server: Server | {id: string}): Promise<void> {
         await servers.get(server.id).update(server).run(await conn());
     }
@@ -179,10 +211,11 @@ class DB {
         return message;
     }
 
-    async getMessageCount(): Promise<number> {
-        return await messages.count().run(await conn());
+    async getMessageCount(serverID: string, channelID: string): Promise<number> {
+        return messages.orderBy({index: "timestamp"}).filter(function (d: any) {
+            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)
+        }).count().run(await conn());
     }
-
     async getMessage(messageID: string): Promise<Message | null> {
         return await messages.get(messageID).run(await conn());
     }
@@ -191,34 +224,10 @@ class DB {
         return await messages.run(await conn());
     }
 
-    async getMessagesSince(serverID: string, channelID: string, from: number, to: number): Promise<Message[]> {
+    async getMessages(serverID: string, channelID: string): Promise<Message[]> {
         return messages.orderBy({index: "timestamp"}).filter(function (d: any) {
-            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('timestamp').during(from, to);
+            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)
         }).run(await conn());
-    }
-
-    async getMessagesAfter(serverID: string, channelID: string, time: number): Promise<Message[]> {
-        return messages.orderBy({index: "timestamp"}).filter(function (d: any) {
-            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('timestamp').gt(time);
-        }).run(await conn());
-    }
-
-    async getMessagesAfterLimit(serverID: string, channelID: string, time: number , limit: number): Promise<Message[]> {
-        return messages.orderBy({index: "timestamp"}).filter(function (d: any) {
-            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('timestamp').gt(time);
-        }).limit(limit).run(await conn());
-    }
-
-    async getMessagesBefore(serverID: string, channelID: string, time: number): Promise<Message[]> {
-        return messages.orderBy({index: "timestamp"}).filter(function (d: any) {
-            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('timestamp').lt(time);
-        }).run(await conn());
-    }
-
-    async getMessagesBeforeLimit(serverID: string, channelID: string, time: number , limit: number): Promise<Message[]> {
-        return messages.orderBy({index: "timestamp"}).filter(function (d: any) {
-            return d('serverId').eq(serverID)&&d('channelId').eq(channelID)&&d('timestamp').lt(time);
-        }).limit(limit).run(await conn());
     }
 
 

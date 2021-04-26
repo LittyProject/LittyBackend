@@ -16,22 +16,39 @@ export default async function(req: express.Request, res: express.Response) {
             return res.error("invalid data");
         }
         let serverInfo = serverEditSchema.parse(req.body);
-
-        const server: Server = {
-            id: f.genID(),
+        const id = f.genID();
+        let server: Server = {
+            id: id,
             name: serverInfo.name,
             ownerId: req.user.id,
             flags: [],
             banList: [],
+            roles: [
+                {
+                    id: id,
+                    name: "everyone",
+                    position: 0,
+                    color: "#FCFCFC",
+                    members: [req.user.id],
+                    timestamp: new Date().getTime()
+                }
+            ],
             channels: [{
-                id: f.genID(),
+                id: id,
                 name: "general",
-                createdAt: new Date()
+                createdAt: new Date(),
+                type: 1
             }],
-            iconURL: process.env.cdnURL + "/def_server.png",
+            iconURL: serverInfo.iconURL ? serverInfo.iconURL : process.env.cdnURL + "/def_server.png",
             createdAt: new Date(),
 
         };
+        if(req.user.flags.includes('DEVELOPER')&&serverInfo.flags){
+            server.flags=serverInfo.flags;
+        }
+        if(req.user.flags.includes('DEVELOPER')&&serverInfo.info){
+            server.info=serverInfo.info;
+        }
         let date = new Date();
         const message: Message = {
             serverId: server.id,

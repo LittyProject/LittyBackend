@@ -8,6 +8,7 @@ import {SocketServer} from "../../app";
 export default async function(req: express.Request, res: express.Response) {
     try {
         if(!req.user) return res.notAuthorized;
+        console.log(req.user.id);
         let user = await db.getUser(req.params.id == "@me" ? req.user.id : req.params.id);
         if(user) {
             if(userUpdate.check(req.body)){
@@ -27,8 +28,10 @@ export default async function(req: express.Request, res: express.Response) {
             }
             return res.error(messages.INVALID_DATA);
         }
+        console.log("elo");
         return res.notFound();
     } catch(err) {
+        console.log(err);
         return res.error(err);
     }
 }

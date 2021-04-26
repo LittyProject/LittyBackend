@@ -6,7 +6,8 @@
   "devDependencies": {
     "@types/node": "^14.11.2",
     "@types/socket.io": "^2.1.13",
-    "typescript": "^3.9.7"
+    "ts-node-dev": "^1.1.6",
+    "typescript": "^3.9.9"
   },
   "scripts": {
     "tsc": "tsc --outDir ./build",

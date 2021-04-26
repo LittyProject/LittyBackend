@@ -1,6 +1,7 @@
 import express from 'express';
 import db from "../../db";
 import {Channel, channelEditSchema, channelSchema} from "../../models/server";
+import {Invite, inviteSchema} from "../../models/invite";
 import * as f from '../../functions';
 import {SocketServer} from "../../app";
 
@@ -14,23 +15,25 @@ export default async function(req: express.Request, res: express.Response) {
         if(!server) {
             return res.notFound();
         } else {
-            if(server.channels.length===50){
-                return res.error("Server can only have 50 channels");
+            if(!server.invites){
+                server.invites=[];
             }
-            if(!channelEditSchema.check(req.body)){
-                return res.error("Invalid data");
+            if(server.invites?.length===50){
+                return res.error("Server can only have 50 invites");
             }
-            let channelSchema = channelEditSchema.parse(req.body);
-            const channel : Channel = {
+            let code = f.genID();
+            const invite : Invite = {
+                inviterId: "",
                 id: f.genID(),
-                name: channelSchema.name,
-                createdAt: new Date(),
-                type: channelSchema.type
+                code: code,
+                serverId: server.id,
+                timestampCreated: new Date().getTime()
             }
-            server.channels.push(channel);
+            server.invites.push(invite.id);
             await db.updateServer(server);
-            SocketServer.to(server.id).emit('serverChannelCreate', {id: server.id, data: channel});
-            return res.success(channel);
+            await db.insertInvite(invite);
+            SocketServer.to(server.id).emit('serverInviteCreate', {id: server.id, data: invite});
+            return res.success(invite);
         }
     } catch(err) {
         return res.error(err);

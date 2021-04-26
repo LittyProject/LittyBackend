@@ -21,28 +21,8 @@ export default async function(req: express.Request, res: express.Response) {
             if(!channel){
                 return res.notFound();
             }
-            if(req.query.after&&req.query.limit){
-                let d : number = parseInt(<string>req.query.limit);
-                if(d>0&&d<=50){
-                    const b = await db.getMessagesAfterLimit(server.id, channel.id, parseInt(<string>req.query.after), parseInt(<string>req.query.limit));
-                    res.success(b)
-                }else{
-                    return res.error("Invalid messages limit");
-                }
-            }else if(req.query.before&&req.query.limit){
-                let d : number = parseInt(<string>req.query.limit);
-                if(d>0&&d<=50){
-                    const b = await db.getMessagesBeforeLimit(server.id, channel.id, parseInt(<string>req.query.before), parseInt(<string>req.query.limit));
-                    res.success(b)
-                }else{
-                    return res.error("Invalid messages limit");
-                }
-            }else if(req.query.from&&req.query.to){
-                const b = await db.getMessagesSince(server.id, channel.id, parseInt(<string>req.query.from), parseInt(<string>req.query.to));
-                res.success(b)
-            }else{
-                return res.error("Query is not set | available: after, before | required limit [1-50]")
-            }
+            const d = await db.getMessages(server.id, channel.id);
+            return res.success(d);
         }
     } catch(err) {
         return res.error(err);

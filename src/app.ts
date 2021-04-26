@@ -5,9 +5,10 @@ import cors from 'cors';
 import db from "./db";
 const methodOverride = require("method-override");
 const app = express();
+db.conn();
 
 const corsWhitelist = [
-    'http://localhost:1920', 'http://localhost:8080', 'http://localhost:3001', 'http://localhost:3000/', 'http://192.168.8.42:8080'
+    'http://localhost:1920', 'http://localhost:8080', 'http://192.168.8.142:8080', 'http://localhost:8081', 'http://localhost:3001', 'http://localhost:3000/', 'http://192.168.8.42:8080'
 ];
 
 // SOCKET.IO SECTION
@@ -17,8 +18,8 @@ const server = http.createServer(app);
 const io = socketIO({
     perMessageDeflate: false,
     pingTimeout: 60000,
+    transports: ["websocket", "polling"],
     path: "/gateway",
-    transports: ['websocket']
 }).listen(server);
 
 
@@ -48,6 +49,7 @@ app.use("/", require("./routes/index"));
 
 const PORT = process.env.PORT || 1920;
 server.listen(PORT, async () => {
+    console.log(new Date().getTime())
     console.log('Litty is running on port: '+PORT);
 });
 

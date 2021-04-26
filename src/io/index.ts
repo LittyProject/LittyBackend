@@ -3,7 +3,7 @@ import db from "../db";
 import * as f from "../functions";
 import {messages} from "../models/responseMessages";
 import socket from "socket.io";
-import {updateCustomStatus} from "../models/user";
+import {guildMemberSchema, updateCustomStatus} from "../models/user";
 import {presenceSchema} from "../models/application";
 
 
@@ -38,8 +38,15 @@ module.exports = async (io: socket.Socket)=>{
                    socket.join(server);
                }
                let servers = await db.getUserServersWithMembers(user.id);
+               let userData = await f.without(user, "password token lastIP servers");
+               let friends = [];
+               for(let friend of userData.friends){
+                   let model = await f.getOnlyByZod(await db.getUser(friend), guildMemberSchema);
+                   friends.push(model)
+               }
                socket.emit("authenticated", true);
-               socket.emit("setUser", await f.without(user, "password token lastIP servers"));
+               socket.emit("setUser", userData);
+               socket.emit("setFriends", friends);
                socket.emit("setServers", servers);
                try {
                    let validatedStatus = updateCustomStatus.parse({status: user.onlineStatus});
@@ -130,6 +137,22 @@ module.exports = async (io: socket.Socket)=>{
                 }catch (err){
                     console.log(err);
                 }
+            }
+        });
+        socket.on("join", async(data: any)=>{
+            if(!socket.auth||socket.type !=="BEARER") return;
+            if(data.server){
+                let user = await db.getUserByToken(socket.token);
+                if(!user?.servers.includes(data.server)) return;
+                socket.join(data.server);
+            }
+        });
+        socket.on("leave", async(data: any)=>{
+            if(!socket.auth||socket.type !=="BEARER") return;
+            if(data.server){
+                let user = await db.getUserByToken(socket.token);
+                if(!user?.servers.includes(data.server)) return;
+                socket.leave(data.server);
             }
         });
         socket.on("userUpdateStatus", async (data: any)=>{
