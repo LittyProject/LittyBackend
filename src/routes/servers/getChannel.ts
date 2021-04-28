@@ -13,7 +13,6 @@ export default async function(req: express.Request, res: express.Response) {
             return res.notFound();
         } else {
             let channel = server.channels.find(a=>a.id === req.params.channel);
-            console.log(channel);
             if(!channel){
                 return res.notFound();
             }

@@ -18,7 +18,7 @@ export default async function(req: express.Request, res: express.Response) {
                 user.email="DELETED_"+user.email;
                 const model = await f.without(user, "password token email");
                 for(let server of user.servers){
-                    SocketServer.to(server).emit('memberUpdate', {id: user.id, server: server, data: {...model}});
+                    SocketServer.to(server).emit('serverMemberUpdate', {id: server, member: {...model}});
                 }
                 await db.updateUser(model);
                 return res.success("Account has been deleted");

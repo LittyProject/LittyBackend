@@ -38,7 +38,7 @@ export default async function(req: express.Request, res: express.Response) {
                 switch (req.body.type){
                     case "NORMAL":
                         response = await db.insertMessage(msg);
-                        SocketServer.to(server.id).emit('messageCreate', {...response, typeChannel: "channel"});
+                        SocketServer.to(server.id).emit('serverMessageCreate', msg);
                         return res.success(response);
                     default:
                         return res.error(messages.INVALID_DATA);

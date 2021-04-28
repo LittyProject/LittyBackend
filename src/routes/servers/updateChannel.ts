@@ -1,8 +1,6 @@
 import express from 'express';
 import db from "../../db";
-import {Message, messageSchema} from "../../models/messages";
-import {messages} from "../../models/responseMessages";
-import * as f from "../../functions";
+import {updateChannel} from "../../models/payload"
 import {SocketServer} from "../../app";
 
 export default async function(req: express.Request, res: express.Response) {
@@ -11,7 +9,6 @@ export default async function(req: express.Request, res: express.Response) {
         if(!req.params.channel) return res.notFound();
         if(!req.user) return res.notAuthorized();
         if(!req.user.servers.includes(req.params.id)) return res.notFound();
-
         let server = await db.getServer(req.params.id);
         if(!server) {
             return res.notFound();
@@ -20,8 +17,13 @@ export default async function(req: express.Request, res: express.Response) {
             if(!channel){
                 return res.notFound();
             }
-            const d = await db.getMessages(server.id, channel.id);
-            return res.success(d);
+            if(!updateChannel.check(req.body)){
+                return res.error("invalid data");
+            }
+            channel.name = req.body.name;
+            await db.updateServer({id: server.id, channels: [...server.channels]});
+            SocketServer.to(server.id).emit('serverChannelUpdate', {id: server.id, data: channel});
+            return res.success(channel);
         }
     } catch(err) {
         return res.error(err);

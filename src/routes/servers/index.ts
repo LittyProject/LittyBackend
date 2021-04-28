@@ -21,10 +21,17 @@ import editFlags from "./editFlags";
 import checkPerm from "../../middlewares/checkPerm";
 import editMember from "./editMember";
 
+//Update
+import updateChannel from "./updateChannel";
+import updateServer from "./updateServer";
+
+//Delete
+import deleteServer from "./deleteServer";
+
 const router = express.Router();
 
 router.use('/:id', rateLimits(20, 100));
-router.route("/:id").get(checkAuth, getServer);
+router.route("/:id").get(checkAuth, getServer).put(checkAuth, updateServer).delete(checkAuth, deleteServer);
 
 router.use('/:id/channels', rateLimits(20, 100));
 router.route("/:id/channels").get(checkAuth, getChannels).post(checkAuth, createChannel);
@@ -33,7 +40,7 @@ router.use('/:id/invites', rateLimits(20, 100));
 router.route("/:id/invites").post(checkAuth, createInvite);
 
 router.use('/:id/channels/:channel', rateLimits(20, 100));
-router.route("/:id/channels/:channel").get(checkAuth, getChannel);
+router.route("/:id/channels/:channel").get(checkAuth, getChannel).put(checkAuth, updateChannel);
 
 router.use('/:id/roles', rateLimits(20, 100));
 router.route("/:id/roles").get(checkAuth, getRoles).post(checkAuth, createRole);

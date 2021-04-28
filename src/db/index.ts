@@ -191,6 +191,10 @@ class DB {
         return toReturn;
     }
 
+    async getServerUsers(serverID: string): Promise<User[] | null> {
+        return await users.filter(r.row("servers").contains(serverID)).run(await conn());
+    }
+
     async getServer(serverID: string): Promise<Server | null> {
         return await servers.get(serverID).run(await conn());
     }
@@ -209,6 +213,20 @@ class DB {
         await servers.get(server.id).update(server).run(await conn());
     }
 
+
+
+    async deleteServer(id: string) : Promise<void> {
+        await servers.get(id).delete().run(await conn());
+        const a = await this.getServerUsers(id);
+        console.log(id);
+        if(a){
+            a.map(async (b: User) => {
+                b.servers.splice(b.servers.findIndex(a => a === id), 1);
+                await this.updateUser({id: b.id, servers: b.servers});
+            });
+        }
+        await invite.filter({serverId: id}).delete().run(await conn());
+    }
 
 
     async insertMessage(message: Message): Promise<Message> {

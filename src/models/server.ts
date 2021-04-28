@@ -65,7 +65,8 @@ export const serverEditSchema = z.object({
     name: z.string().min(1, {message: "Must be 1 or more characters long"}).max(30, {message: "Must be 30 or fewer characters long"}),
     iconURL: z.string().url({message: "Must contains web URL"}).optional(),
     flags: z.array(z.string()).optional(),
-    info: serverInfo.optional()
+    info: serverInfo.optional(),
+    banner: z.string().url({message: "Must contains web URL"}).optional(),
 });
 
 export const channelEditSchema = z.object({

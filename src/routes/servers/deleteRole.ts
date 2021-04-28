@@ -20,7 +20,7 @@ export default async function(req: express.Request, res: express.Response) {
             }
             server.roles.splice(server.roles.findIndex(a=> a.id===req.params.role), 1);
             await db.updateServer({id: server.id, roles: server.roles});
-            SocketServer.to(server.id).emit('serverRoleDelete', {id: server.id, data: role.id});
+            SocketServer.to(server.id).emit('serverRoleDelete', {id: server.id, data: role});
             return res.success(role);
         }
         return res.notFound();

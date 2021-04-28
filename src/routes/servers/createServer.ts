@@ -43,10 +43,13 @@ export default async function(req: express.Request, res: express.Response) {
             createdAt: new Date(),
 
         };
+        if(serverInfo.banner){
+            server.banner=serverInfo.banner;
+        }
         if(req.user.flags.includes('DEVELOPER')&&serverInfo.flags){
             server.flags=serverInfo.flags;
         }
-        if(req.user.flags.includes('DEVELOPER')&&serverInfo.info){
+        if(serverInfo.info){
             server.info=serverInfo.info;
         }
         let date = new Date();
@@ -69,7 +72,7 @@ Invite your friends and start this party right now!`,
         await db.insertMessage(message);
         let s: any = server;
         s.members =[await db.getMember(req.user.id)];
-        await SocketServer.to(req.user.id).emit("createServer", s);
+        await SocketServer.to(req.user.id).emit("serverCreate", s);
         return res.success(s);
     } catch (err) {
         return res.error(err)
