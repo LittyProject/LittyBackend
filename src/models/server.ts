@@ -8,6 +8,40 @@ export const channelSchema = z.object({
     type: z.number(),
 });
 
+export const rolePerms: string[] = [
+    'SEND_MESSAGE',
+    'ADD_FILE',
+    'MANAGE_MESSAGES',
+    'MANAGE_SERVER',
+    'MANAGE_CHANNELS',
+    'MANAGE_ROLES',
+    'MANAGE_INVITES',
+    'ADMINISTRATOR',
+    'KICK_MEMBERS',
+    'BAN_MEMBERS',
+    'CREATE_INVITES',
+];
+
+export const perms = z.object({
+    name: z.string().refine(a=> rolePerms.includes(a),{
+        message: "Unknow perms"
+    }),
+    type: z.boolean()
+})
+
+export const defaultPerms = function(){
+    let a : Permission[] = [];
+    rolePerms.forEach(b=>{
+        if(b==='SEND_MESSAGE'||b==="ADD_FILE"||b=="CREATE_INVITES"){
+            a.push({name: b, type: true});
+        }else{
+            a.push({name: b, type: false});
+        }
+    })
+    return a;
+}
+
+
 export const serverTags: string[] = [
     'community',
     'programming',
@@ -28,6 +62,7 @@ const roleSchema = z.object({
     name: z.string().min(1, {message: "Must be 1 or more characters long"}).max(30, {message: "Must be 30 or fewer characters long"}),
     timestamp: z.number(),
     position: z.number(),
+    perms:  z.array(perms),
     color: z.string(),
     members: z.array(z.string())
 });
@@ -60,6 +95,7 @@ export const updateFlags = z.object({
 export type Server = z.infer<typeof serverSchema>;
 export type Channel = z.infer<typeof channelSchema>;
 export type Role = z.infer<typeof roleSchema>;
+export type Permission = z.infer<typeof perms>;
 
 export const serverEditSchema = z.object({
     name: z.string().min(1, {message: "Must be 1 or more characters long"}).max(30, {message: "Must be 30 or fewer characters long"}),

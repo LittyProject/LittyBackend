@@ -33,6 +33,7 @@ module.exports = async (io: socket.Socket)=>{
                socket.auth=true;
                socket.token=token;
                socket.type=type;
+               socket.id=user.id;
                socket.join(user.id);
                for(let server of user.servers){
                    socket.join(server);
@@ -127,6 +128,7 @@ module.exports = async (io: socket.Socket)=>{
                     }
                     io.to(user.id).emit('userUpdateStatus', {...validatedStatus});
                     await db.updateUser(user);
+                    // @ts-ignore
                 } catch(err) {
                     console.log(err);
                 }

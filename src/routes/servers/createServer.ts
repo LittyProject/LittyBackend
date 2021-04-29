@@ -1,4 +1,4 @@
-import {Server, serverEditSchema} from "../../models/server";
+import {defaultPerms, Server, serverEditSchema} from "../../models/server";
 import express from 'express';
 import * as f from '../../functions';
 import db from "../../db";
@@ -30,7 +30,8 @@ export default async function(req: express.Request, res: express.Response) {
                     position: 0,
                     color: "#FCFCFC",
                     members: [req.user.id],
-                    timestamp: new Date().getTime()
+                    timestamp: new Date().getTime(),
+                    perms: defaultPerms(),
                 }
             ],
             channels: [{
@@ -73,6 +74,12 @@ Invite your friends and start this party right now!`,
         let s: any = server;
         s.members =[await db.getMember(req.user.id)];
         await SocketServer.to(req.user.id).emit("serverCreate", s);
+        SocketServer.sockets.sockets.forEach((socket : any)=>{
+            // @ts-ignore
+            if(socket.id===req.user.id){
+                socket.join(server.id);
+            }
+        });
         return res.success(s);
     } catch (err) {
         return res.error(err)

@@ -27,12 +27,10 @@ export default async function(req: express.Request, res: express.Response) {
             if(!channel){
                 return res.notFound();
             }
-            if(!updateChannel.check(req.body)){
-                return res.error("invalid data");
-            }
-            channel.name = req.body.name;
+            // @ts-ignore
+            server.channels.splice(server.channels.findIndex(a=> a.id===channel.id), 1);
             await db.updateServer({id: server.id, channels: [...server.channels]});
-            SocketServer.to(server.id).emit('serverChannelUpdate', {id: server.id, data: channel});
+            SocketServer.to(server.id).emit('serverChannelDelete', {id: server.id, data: channel});
             return res.success(channel);
         }
     } catch(err) {

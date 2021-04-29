@@ -14,6 +14,16 @@ export default async function(req: express.Request, res: express.Response) {
         if(!server) {
             return res.notFound();
         } else {
+            server.roles = server.roles.sort(function(a: any, b: any){return b.position - a.position});
+            // @ts-ignore
+            let userRole = server.roles.find((a: any)=> a.members.includes(req.user.id));
+            if(!userRole){
+                return res.error("Error with member roles");
+            }
+            // @ts-ignore
+            if(!userRole.perms.find((a: any)=> a.name==="MANAGE_CHANNELS").type&&server.ownerId !==req.user.id){
+                return res.error("you are not has permission to that");
+            }
             if(server.channels.length===50){
                 return res.error("Server can only have 50 channels");
             }

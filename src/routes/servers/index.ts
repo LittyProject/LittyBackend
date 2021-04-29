@@ -19,14 +19,15 @@ import createInvite from "./createInvite";
 import createRole from "./createRole";
 import editFlags from "./editFlags";
 import checkPerm from "../../middlewares/checkPerm";
-import editMember from "./editMember";
 
 //Update
 import updateChannel from "./updateChannel";
 import updateServer from "./updateServer";
+import updateRole from "./updateRole";
 
 //Delete
 import deleteServer from "./deleteServer";
+import deleteChannel from "./deleteChannel";
 
 const router = express.Router();
 
@@ -40,13 +41,13 @@ router.use('/:id/invites', rateLimits(20, 100));
 router.route("/:id/invites").post(checkAuth, createInvite);
 
 router.use('/:id/channels/:channel', rateLimits(20, 100));
-router.route("/:id/channels/:channel").get(checkAuth, getChannel).put(checkAuth, updateChannel);
+router.route("/:id/channels/:channel").get(checkAuth, getChannel).put(checkAuth, updateChannel).delete(checkAuth, deleteChannel);
 
 router.use('/:id/roles', rateLimits(20, 100));
 router.route("/:id/roles").get(checkAuth, getRoles).post(checkAuth, createRole);
 
 router.use('/:id/roles/:role', rateLimits(20, 100));
-router.route("/:id/roles/:role").get(checkAuth, getRole).put(checkAuth, editMember).delete(checkAuth, deleteRole);
+router.route("/:id/roles/:role").get(checkAuth, getRole).put(checkAuth, updateRole).delete(checkAuth, deleteRole);
 
 router.use('/:id/channels/:channel/messages', rateLimits(20, 100));
 router.route("/:id/channels/:channel/messages").get(checkAuth, getMessages).post(checkAuth, createMessage);

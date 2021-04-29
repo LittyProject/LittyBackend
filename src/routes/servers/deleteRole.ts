@@ -11,6 +11,16 @@ export default async function(req: express.Request, res: express.Response) {
 
         let server = await db.getServer(req.params.id);
         if(server) {
+            server.roles = server.roles.sort(function(a: any, b: any){return b.position - a.position});
+            // @ts-ignore
+            let userRole = server.roles.find((a: any)=> a.members.includes(req.user.id));
+            if(!userRole){
+                return res.error("Error with member roles");
+            }
+            // @ts-ignore
+            if(!userRole.perms.find((a: any)=> a.name==="MANAGE_ROLES").type&&server.ownerId !==req.user.id){
+                return res.error("you are not has permission to that");
+            }
             let role = server.roles.find(a=>a.id === req.params.role);
             if(!role){
                 return res.notFound();
