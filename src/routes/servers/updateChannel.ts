@@ -2,6 +2,7 @@ import express from 'express';
 import db from "../../db";
 import {updateChannel} from "../../models/payload"
 import {SocketServer} from "../../app";
+import {emit} from "../../functions";
 
 export default async function(req: express.Request, res: express.Response) {
     try {
@@ -32,7 +33,7 @@ export default async function(req: express.Request, res: express.Response) {
             }
             channel.name = req.body.name;
             await db.updateServer({id: server.id, channels: [...server.channels]});
-            SocketServer.to(server.id).emit('serverChannelUpdate', {id: server.id, data: channel});
+            emit(server.id, 'serverChannelUpdate', {id: server.id, data: channel});
             return res.success(channel);
         }
     } catch(err) {

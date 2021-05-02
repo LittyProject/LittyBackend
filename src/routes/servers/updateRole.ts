@@ -3,6 +3,7 @@ import db from "../../db";
 import {updateRole} from "../../models/payload";
 import {defaultPerms} from "../../models/server";
 import {SocketServer} from "../../app";
+import {emit} from "../../functions";
 
 export default async function(req: express.Request, res: express.Response) {
     try {
@@ -56,7 +57,7 @@ export default async function(req: express.Request, res: express.Response) {
                 }
             }
             await db.updateServer({id: server.id, roles: [...server.roles]});
-            SocketServer.to(server.id).emit('serverRoleUpdate', {id: server.id, data: role});
+            emit(server.id, 'serverRoleUpdate', {id: server.id, data: role});
             return res.success(role);
         }
         return res.notFound();

@@ -1,6 +1,7 @@
 import express from 'express';
 import db from "../../db";
 import {SocketServer} from "../../app";
+import {emit} from "../../functions";
 
 export default async function(req: express.Request, res: express.Response) {
     try {
@@ -13,7 +14,7 @@ export default async function(req: express.Request, res: express.Response) {
                 return res.error("You're not owner");
             }
             await db.deleteServer(req.params.id);
-            SocketServer.to(server.id).emit('serverDelete', server);
+            emit(server.id, 'serverDelete', server);
             return res.success(server);
         }
         return res.notFound();

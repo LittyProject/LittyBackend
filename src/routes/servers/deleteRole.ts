@@ -1,6 +1,7 @@
 import express from 'express';
 import db from "../../db";
 import {SocketServer} from "../../app";
+import {emit} from "../../functions";
 
 export default async function(req: express.Request, res: express.Response) {
     try {
@@ -30,7 +31,7 @@ export default async function(req: express.Request, res: express.Response) {
             }
             server.roles.splice(server.roles.findIndex(a=> a.id===req.params.role), 1);
             await db.updateServer({id: server.id, roles: server.roles});
-            SocketServer.to(server.id).emit('serverRoleDelete', {id: server.id, data: role});
+            emit(server.id, 'serverRoleDelete', {id: server.id, data: role});
             return res.success(role);
         }
         return res.notFound();

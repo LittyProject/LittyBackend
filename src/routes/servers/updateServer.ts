@@ -2,6 +2,7 @@ import express from 'express';
 import db from "../../db";
 import {updateServer} from "../../models/payload";
 import {SocketServer} from "../../app";
+import {emit} from "../../functions";
 
 export default async function(req: express.Request, res: express.Response) {
     try {
@@ -33,7 +34,7 @@ export default async function(req: express.Request, res: express.Response) {
             a.flags=flags;
         }
         await db.updateServer({id: server.id, ...a});
-        SocketServer.to(server.id).emit('serverUpdate', {id: server.id, data: a});
+        emit(server.id, 'serverUpdate', {id: server.id, data: a});
         return res.success(a);
     } catch(err) {
         return res.error(err);

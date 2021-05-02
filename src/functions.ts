@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import {guildMemberSchema} from "./models/user";
 import {ZodObject} from "zod";
+import {SocketServer} from "./app";
 const uniqid = require('uniqid');
 
 export function genID(): string{
@@ -13,6 +14,14 @@ export async function compareHash(string: string, password: string): Promise<boo
             if(err) rej(err);
             else res(result);
         });
+    });
+}
+
+export function emit(room: string, event: string, data: any){
+    SocketServer.sockets.sockets.forEach((socket : any)=>{
+        if(socket.rooms.has(room)){
+            socket.emit(event, data);
+        }
     });
 }
 

@@ -4,6 +4,7 @@ import {Channel, channelEditSchema, channelSchema} from "../../models/server";
 import {Invite, inviteSchema} from "../../models/invite";
 import * as f from '../../functions';
 import {SocketServer} from "../../app";
+import {emit} from "../../functions";
 
 export default async function(req: express.Request, res: express.Response) {
     try {
@@ -42,7 +43,7 @@ export default async function(req: express.Request, res: express.Response) {
             server.invites.push(invite.id);
             await db.updateServer(server);
             await db.insertInvite(invite);
-            SocketServer.to(server.id).emit('serverInviteCreate', {id: server.id, data: invite});
+            emit(server.id, 'serverInviteCreate', {id: server.id, data: invite});
             return res.success(invite);
         }
     } catch(err) {

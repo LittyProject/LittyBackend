@@ -2,6 +2,7 @@ import express from 'express';
 import db from "../../db";
 import {updateChannel} from "../../models/payload"
 import {SocketServer} from "../../app";
+import {emit} from "../../functions";
 
 export default async function(req: express.Request, res: express.Response) {
     try {
@@ -30,7 +31,7 @@ export default async function(req: express.Request, res: express.Response) {
             // @ts-ignore
             server.channels.splice(server.channels.findIndex(a=> a.id===channel.id), 1);
             await db.updateServer({id: server.id, channels: [...server.channels]});
-            SocketServer.to(server.id).emit('serverChannelDelete', {id: server.id, data: channel});
+            emit(server.id, 'serverChannelDelete', {id: server.id, data: channel});
             return res.success(channel);
         }
     } catch(err) {

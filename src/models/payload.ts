@@ -1,6 +1,6 @@
 import * as z from 'zod';
 import {perms, serverInfo} from "./server";
-import {serverFlags} from "./enum";
+import {serverFlags, userFlags} from "./enum";
 
 export const updateChannel = z.object({
     name: z.string().min(1, {message: "Must be 1 or more characters long"}).max(30, {message: "Must be 30 or fewer characters long"}),
@@ -22,4 +22,14 @@ export const updateRole = z.object({
     color: z.string().optional(),
     member: z.string().optional(),
     perms:  z.array(perms).optional(),
-})
+});
+
+export const  manageUser = z.object({
+    username: z.string().min(3, {message: "Must be 3 or more characters long"}).max(24, {message: "Must be 24 or fewer characters long"}).optional(),
+    avatarURL: z.string().url({message: "Must contains web URL"}).optional(),
+    tag: z.string().length(4, {message: "Must be 4 characters long"}).optional(),
+    banned: z.boolean().optional(),
+    flags: z.array(z.enum(userFlags as [string, ...string[]])).optional(),
+    disabled: z.boolean().optional(),
+    deleted: z.boolean().optional(),
+});

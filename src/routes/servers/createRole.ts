@@ -3,6 +3,7 @@ import db from "../../db";
 import {defaultPerms, Role, roleEditSchema} from "../../models/server";
 import * as f from '../../functions';
 import {SocketServer} from "../../app";
+import {emit} from "../../functions";
 
 export default async function(req: express.Request, res: express.Response) {
     try {
@@ -48,7 +49,7 @@ export default async function(req: express.Request, res: express.Response) {
             }
             server.roles.push(role);
             await db.updateServer(server);
-            SocketServer.to(server.id).emit('serverRoleCreate', {id: server.id, data: role});
+            emit(server.id, 'serverRoleCreate', {id: server.id, data: role});
             return res.success(role);
         }
     } catch(err) {

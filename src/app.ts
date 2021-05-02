@@ -9,22 +9,6 @@ db.conn();
 
 const config = require('../config.json');
 
-// SOCKET.IO SECTION
-const http = require("http");
-const socketIO = require("socket.io");
-const server = http.createServer(app);
-const io = socketIO({
-    perMessageDeflate: false,
-    pingTimeout: 60000,
-    transports: ["websocket", "polling"],
-    path: "/gateway",
-}).listen(server);
-
-
-
-require("./io")(io);
-
-
 app.use(cors({
     origin: (origin, callback) => {
         if(!origin) callback(null, true);
@@ -46,10 +30,23 @@ app.use("/api/", require("./routes/index"));
 app.use("/", require("./routes/index"));
 
 const PORT = process.env.PORT || 1920;
-server.listen(PORT, async () => {
+const s = app.listen(PORT, async () => {
     console.log(new Date().getTime())
     console.log('Litty is running on port: '+PORT);
 });
+
+// SOCKET.IO SECTION
+const http = require("http");
+const socketIO = require("socket.io");
+const io = socketIO({
+    perMessageDeflate: false,
+    pingTimeout: 60000,
+    transports: ["websocket", "polling"],
+    path: "/gateway",
+}).listen(s);
+
+
+require("./io")(io);
 
 // OTHER
 response.success = function(data) {

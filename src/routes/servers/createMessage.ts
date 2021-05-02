@@ -4,6 +4,7 @@ import {Message, messageSchema} from "../../models/messages";
 import {messages} from "../../models/responseMessages";
 import * as f from "../../functions";
 import {SocketServer} from "../../app";
+import {emit} from "../../functions";
 
 export default async function(req: express.Request, res: express.Response) {
     try {
@@ -48,7 +49,7 @@ export default async function(req: express.Request, res: express.Response) {
                 switch (req.body.type){
                     case "NORMAL":
                         response = await db.insertMessage(msg);
-                        SocketServer.to(server.id).emit('serverMessageCreate', msg);
+                        emit(server.id, 'serverMessageCreate', msg);
                         return res.success(response);
                     default:
                         return res.error(messages.INVALID_DATA);

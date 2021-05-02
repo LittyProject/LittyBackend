@@ -34,10 +34,7 @@ module.exports = async (io: socket.Socket)=>{
                socket.token=token;
                socket.type=type;
                socket.id=user.id;
-               socket.join(user.id);
-               for(let server of user.servers){
-                   socket.join(server);
-               }
+               await socket.join(`${user.id}`);
                let servers = await db.getUserServersWithMembers(user.id);
                let userData = await f.without(user, "password token lastIP servers");
                let friends = [];
@@ -45,6 +42,7 @@ module.exports = async (io: socket.Socket)=>{
                    let model = await f.getOnlyByZod(await db.getUser(friend), guildMemberSchema);
                    friends.push(model)
                }
+               // @ts-ignore
                socket.emit("authenticated", true);
                socket.emit("setUser", userData);
                socket.emit("setFriends", friends);
@@ -53,9 +51,11 @@ module.exports = async (io: socket.Socket)=>{
                    let validatedStatus = updateCustomStatus.parse({status: user.onlineStatus});
                    user.status = <number>validatedStatus.status;
                    // @ts-ignore
-                   for(let server of servers){
-                       io.to(server.id).emit('memberUpdateStatus', {id: user.id, server: server.id, ...validatedStatus});
-                   }
+                   servers.map(async (a) => {
+                       socket.join(`${a.id}`);
+                       io.to(`${a.id}`).emit('memberUpdateStatus', {id: user.id, server: a, ...validatedStatus});
+                       io.to(`${a.id}`).emit('memberUpdateStatus', {id: user.id, server: a});
+                   });
                    io.to(user.id).emit('userUpdateStatus', {...validatedStatus});
                    await db.updateUser(user);
                } catch(err) {
@@ -171,10 +171,10 @@ module.exports = async (io: socket.Socket)=>{
                 if(validatedStatus.status){
                     user.status = validatedStatus.status;
                 }
-                for(let server of user.servers){
-                    io.to(server).emit('memberUpdateStatus', {id: user.id, server: server, ...validatedStatus});
-                }
-                io.to(user.id).emit('userUpdateStatus', {...validatedStatus});
+                user.servers.map(async(server)=>{
+                    await io.to(`${server}`).emit('memberUpdateStatus', {id: user.id, server: server, ...validatedStatus});
+                })
+                io.to(`${user.id}`).emit('userUpdateStatus', {...validatedStatus});
                 await db.updateUser(user);
             } catch(err) {
                 console.log(err);

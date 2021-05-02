@@ -3,6 +3,7 @@ import db from "../../db";
 import {Channel, channelEditSchema, channelSchema} from "../../models/server";
 import * as f from '../../functions';
 import {SocketServer} from "../../app";
+import {emit} from "../../functions";
 
 export default async function(req: express.Request, res: express.Response) {
     try {
@@ -39,7 +40,7 @@ export default async function(req: express.Request, res: express.Response) {
             }
             server.channels.push(channel);
             await db.updateServer(server);
-            SocketServer.to(server.id).emit('serverChannelCreate', {id: server.id, data: channel});
+            emit(server.id, 'serverChannelCreate', {id: server.id, data: channel});
             return res.success(channel);
         }
     } catch(err) {

@@ -6,6 +6,7 @@ import { Message } from "../../models/messages";
 import { messages } from "../../models/responseMessages";
 import { SocketServer } from "../../app";
 import socket from "socket.io";
+import {emit} from "../../functions";
 
 export default async function(req: express.Request, res: express.Response) {
     try {
@@ -73,7 +74,7 @@ Invite your friends and start this party right now!`,
         await db.insertMessage(message);
         let s: any = server;
         s.members =[await db.getMember(req.user.id)];
-        await SocketServer.to(req.user.id).emit("serverCreate", s);
+        emit(req.user.id, "serverCreate", s);
         SocketServer.sockets.sockets.forEach((socket : any)=>{
             // @ts-ignore
             if(socket.id===req.user.id){

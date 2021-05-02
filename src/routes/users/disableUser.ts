@@ -4,6 +4,7 @@ import * as f from "../../functions";
 import { messages } from "../../models/responseMessages";
 import {guildMemberSchema} from "../../models/user";
 import {SocketServer} from "../../app";
+import {emit} from "../../functions";
 
 export default async function(req: express.Request, res: express.Response) {
     try {
@@ -14,7 +15,7 @@ export default async function(req: express.Request, res: express.Response) {
                 user.disabled=true;
                 const model = await f.without(user, "password token email");
                 for(let server of user.servers){
-                    SocketServer.to(server).emit('serverMemberUpdate', {id: server, member: {...model}});
+                    emit(server, 'serverMemberUpdate', {id: server, member: {...model}});
                 }
                 await db.updateUser(model);
                 return res.success("Account has been disabled");
