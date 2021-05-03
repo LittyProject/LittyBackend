@@ -36,7 +36,10 @@ export const  manageUser = z.object({
 
 export const createApp = z.object({
     name: z.string(),
+});
 
+export const editApp = z.object({
+    name: z.string(),
 });
 
 export const createChangelog = z.object({

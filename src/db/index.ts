@@ -1,4 +1,4 @@
-import { r, Connection } from 'rethinkdb-ts';
+import {r, Connection, WriteResult} from 'rethinkdb-ts';
 
 import {Server} from '../models/server';
 import {guildMemberSchema, Member, User} from '../models/user';
@@ -72,6 +72,14 @@ class DB {
     async getUserApplications(id: string): Promise<Application[] | null> {
         const arr = await applications.filter({owner: id}).run(await conn());
         return arr.length > 0 ? arr as Application[] : [];
+    }
+
+    async deleteApplication(id: string): Promise<void> {
+        await applications.get(id).delete().run(await conn());
+    }
+
+    async updateApplication(id: string, data: any): Promise<void> {
+        await applications.get(id).update(data).run(await conn());
     }
 
     async getApplication(token: string): Promise<Application | null> {
