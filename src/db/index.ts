@@ -8,6 +8,7 @@ import {Invite} from "../models/invite";
 import * as f from "../functions";
 import {Application} from "../models/application";
 import {number} from "zod";
+import {Changelog} from "../models/changelog";
 
 let _conn: Connection | null = null;
 async function conn(): Promise<Connection> {
@@ -33,6 +34,7 @@ const users = r.table('users');
 const messages = r.table('messages');//
 const userAlive = r.table('checkUsers');
 const applications = r.table('applications');
+const changelog = r.table('changelog');
 
 class DB {
     async conn(): Promise<Connection> {
@@ -69,7 +71,7 @@ class DB {
 
     async getUserApplications(id: string): Promise<Application[] | null> {
         const arr = await applications.filter({owner: id}).run(await conn());
-        return arr.length > 0 ? arr as Application[] : null;
+        return arr.length > 0 ? arr as Application[] : [];
     }
 
     async getApplication(token: string): Promise<Application | null> {
@@ -117,6 +119,20 @@ class DB {
     async insertUser(user: User): Promise<User> {
         await users.insert(user).run(await conn());
         return user;
+    }
+
+    async insertChangelog(changelog1: Changelog): Promise<Changelog> {
+        await changelog.insert(changelog1).run(await conn());
+        return changelog1;
+    }
+
+    async getChangelogs(): Promise<any[]> {
+        return changelog.orderBy({index: "createdAt"}).run(await conn());
+    }
+
+    async insertApplication(app: Application): Promise<Application> {
+        await applications.insert(app).run(await conn());
+        return app;
     }
 
     async insertInvite(invitee: Invite): Promise<Invite> {

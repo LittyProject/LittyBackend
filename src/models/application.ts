@@ -5,6 +5,7 @@ import {userSchema} from "./user";
 export const applicationSchema = z.object({
     id: z.string(),
     name: z.string(),
+    createdAt: z.date(),
     owner: z.string(),
     bot: z.string().optional(),
     token: z.string()

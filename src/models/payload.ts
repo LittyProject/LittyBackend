@@ -33,3 +33,14 @@ export const  manageUser = z.object({
     disabled: z.boolean().optional(),
     deleted: z.boolean().optional(),
 });
+
+export const createApp = z.object({
+    name: z.string(),
+
+});
+
+export const createChangelog = z.object({
+    title: z.string(),
+    description: z.string(),
+    content: z.string()
+})

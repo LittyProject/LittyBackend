@@ -25,6 +25,14 @@ export function emit(room: string, event: string, data: any){
     });
 }
 
+export function emitAll(event: string, data: any){
+    SocketServer.sockets.sockets.forEach((socket : any)=>{
+        if(socket.auth&&socket.type==='BEARER'){
+            socket.emit(event, data);
+        }
+    });
+}
+
 export async function hashPassword(string: string): Promise<string> {
     return new Promise<string>((res, rej) => {
         bcrypt.genSalt(10, async function(err, salt) {

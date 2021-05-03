@@ -5,6 +5,7 @@ import {messages} from "../models/responseMessages";
 import socket from "socket.io";
 import {guildMemberSchema, updateCustomStatus} from "../models/user";
 import {presenceSchema} from "../models/application";
+import {emit} from "../functions";
 
 
 
@@ -37,6 +38,7 @@ module.exports = async (io: socket.Socket)=>{
                await socket.join(`${user.id}`);
                let servers = await db.getUserServersWithMembers(user.id);
                let userData = await f.without(user, "password token lastIP servers");
+               const applications = await db.getUserApplications(user.id);
                let friends = [];
                for(let friend of userData.friends){
                    let model = await f.getOnlyByZod(await db.getUser(friend), guildMemberSchema);
@@ -47,14 +49,14 @@ module.exports = async (io: socket.Socket)=>{
                socket.emit("setUser", userData);
                socket.emit("setFriends", friends);
                socket.emit("setServers", servers);
+               socket.emit("setApplications", applications);
                try {
                    let validatedStatus = updateCustomStatus.parse({status: user.onlineStatus});
                    user.status = <number>validatedStatus.status;
                    // @ts-ignore
                    servers.map(async (a) => {
                        socket.join(`${a.id}`);
-                       io.to(`${a.id}`).emit('memberUpdateStatus', {id: user.id, server: a, ...validatedStatus});
-                       io.to(`${a.id}`).emit('memberUpdateStatus', {id: user.id, server: a});
+                       emit(a.id, 'memberUpdateStatus', {id: user.id, server: a.id, ...validatedStatus});
                    });
                    io.to(user.id).emit('userUpdateStatus', {...validatedStatus});
                    await db.updateUser(user);
@@ -124,7 +126,7 @@ module.exports = async (io: socket.Socket)=>{
                     let validatedStatus = updateCustomStatus.parse({status: 1});
                     user.status = <number>validatedStatus.status;
                     for(let server of user.servers){
-                        io.to(server).emit('memberUpdateStatus', {id: user.id, server: server, ...validatedStatus});
+                        emit(server, 'memberUpdateStatus', {id: user.id, server: server, ...validatedStatus});
                     }
                     io.to(user.id).emit('userUpdateStatus', {...validatedStatus});
                     await db.updateUser(user);
@@ -172,7 +174,7 @@ module.exports = async (io: socket.Socket)=>{
                     user.status = validatedStatus.status;
                 }
                 user.servers.map(async(server)=>{
-                    await io.to(`${server}`).emit('memberUpdateStatus', {id: user.id, server: server, ...validatedStatus});
+                    await emit(server, 'memberUpdateStatus', {id: user.id, server: server, ...validatedStatus});
                 })
                 io.to(`${user.id}`).emit('userUpdateStatus', {...validatedStatus});
                 await db.updateUser(user);
@@ -180,23 +182,5 @@ module.exports = async (io: socket.Socket)=>{
                 console.log(err);
             }
         });
-
-
-        socket.on("createChannel", async (data: any)=>{
-            if(!socket.auth||socket.type !=="BEARER") return;
-            const user = await db.getUserByToken(socket.token);
-            if(!user) throw messages.UNAUTHORIZED;
-            if(user.banned) throw messages.BANNED;
-            io.to(data.serverID).emit(`newChannel`, data.channel);
-        });
-
-        socket.on("memberJoinServer", async (data: any)=>{
-            if(!socket.auth||socket.type !=="BEARER") return;
-            const user = await db.getUserByToken(socket.token);
-            if(!user) throw messages.UNAUTHORIZED;
-            if(user.banned) throw messages.BANNED;
-            io.to(data.serverID).emit("newMember", data.channel);
-        });
-
     });
 };

@@ -7,7 +7,7 @@ export default async function(req: express.Request, res: express.Response) {
         const user = await db.getUser(req.params.id == "@me" ? req.user.id : req.params.id);
         if (user) {
             if (!user.friendRequests) return res.notFound();
-            res.success(user.friendRequests);
+            res.success(user.sendFriendRequests);
         }
         return res.notFound();
     } catch(err) {

@@ -25,6 +25,7 @@ export const userSchema = z.object({
 
     servers: z.array(z.string()),
     friends: z.array(z.string()),
+    sendFriendRequests: z.array(z.string()),
     friendRequests: z.array(z.string()),
 
     disabled: z.boolean(),
@@ -42,6 +43,7 @@ export const guildMemberSchema = z.object({
     createdBy: z.string(),
     createdAt: z.date(),
 
+    servers: z.array(z.string()),
     customStatus: z.string().min(0).max(50, {message: "Must be 50 or fewer characters long"}),
     status: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 15"}),
     onlineStatus: z.number().min(0, {message: "Must be >= 0"}).max(15, {message: "Must be <= 15"}),

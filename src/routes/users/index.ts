@@ -10,6 +10,9 @@ import getFriends from "./getFriends";
 import getFriendRequests from "./getFriendRequests";
 import deleteUser from "./deleteUser";
 import manageUser from "./manageUser";
+import rejectFriend from "./rejectFriend";
+import approveFriend from "./approveFriend";
+import addFriend from "./addFriend";
 const router = express.Router();
 
 router.use('/:id', rateLimits(20, 100));
@@ -20,6 +23,15 @@ router.route("/:id/friends").get(checkAuth, getFriends);
 
 router.use('/:id/friends/pending', rateLimits(20, 100));
 router.route("/:id/friends/pending").get(checkAuth, getFriendRequests);
+
+router.use('/:id/reject', rateLimits(20, 100));
+router.route("/:id/reject").post(checkAuth, rejectFriend);
+
+router.use('/:id/request', rateLimits(20, 100));
+router.route("/:id/request").post(checkAuth, addFriend);
+
+router.use('/:id/approve', rateLimits(20, 100));
+router.route("/:id/approve").post(checkAuth, approveFriend);
 
 router.use('/:id/friends/:userId', rateLimits(20, 100));
 router.route("/:id/friends/:userId").get(checkAuth, getFriendRequests);

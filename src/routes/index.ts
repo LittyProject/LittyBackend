@@ -7,6 +7,7 @@ router.use("/users", require("./users"));
 router.use("/servers", require("./servers"));
 router.use("/invite", require("./invite"));
 router.use("/applications", require("./application"));
+router.use("/changelog", require("./changelog"));
 
 /*
 router.use("", require(""));
