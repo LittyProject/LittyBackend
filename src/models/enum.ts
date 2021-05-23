@@ -1,10 +1,8 @@
 
 export const userFlags: string[] = [
-    'SUPPORT',
-    'ADMIN',
-    'OWNER',
+    'STAFF',
+    'DEVELOPER',
     'PARTNER',
-    'VERIFY',
     'BUG_HUNTER_1',
     'BUG_HUNTER_2',
     'VIP'

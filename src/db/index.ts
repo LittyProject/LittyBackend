@@ -271,10 +271,18 @@ class DB {
         return await messages.run(await conn());
     }
 
-    async getMessages(serverID: string, channelID: string): Promise<Message[]> {
-        return messages.orderBy({index: "timestamp"}).filter(function (d: any) {
+    async getMessages(serverID: string, channelID: string, timestamp: number): Promise<Message[]> {
+        let a: Message[] = await messages.orderBy({index: "timestamp"}).between(0, timestamp).filter(function (d: any) {
             return d('serverId').eq(serverID)&&d('channelId').eq(channelID)
+        }).limit(20).run(await conn());
+        return a;
+    }
+
+    async getMessagesFirst(serverID: string, channelID: string): Promise<Message[]> {
+        let a: Message[] = await messages.orderBy({index: "timestamp"}).filter(function (d: any) {
+            return d('serverId').eq(serverID) && d('channelId').eq(channelID)
         }).run(await conn());
+        return a.sort((b, c)=> c.timestamp-b.timestamp).splice(0, 20).reverse();
     }
 
 

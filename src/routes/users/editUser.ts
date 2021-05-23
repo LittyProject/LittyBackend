@@ -21,9 +21,9 @@ export default async function(req: express.Request, res: express.Response) {
                 await db.updateUser({id: user.id, ...model});
                 // @ts-ignore
                 for(let server of user.servers){
-                    emit(server, 'serverMemberUpdate', {id: server, data: {...model}})
+                    emit(server, 'serverMemberUpdate', {server: server, member: user.id, data: {...model}})
                 }
-                emit(user.id, 'userUpdate', {data: {...model}})
+                emit(user.id, 'userUpdate', {...model});
                 let response = await f.without(user, 'password token, email');
                 return res.success(response);
             }

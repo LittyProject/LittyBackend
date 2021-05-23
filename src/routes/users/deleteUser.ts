@@ -19,6 +19,7 @@ export default async function(req: express.Request, res: express.Response) {
             for(let server of user.servers){
                 emit(server, 'serverMemberUpdate', {id: server, member: {...model}});
             }
+            emit(user.id, 'userUpdate', {...model});
             await db.updateUser(model);
             return res.success("Account has been deleted");
         }

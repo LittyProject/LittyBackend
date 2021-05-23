@@ -16,9 +16,9 @@ export default async function(req: express.Request, res: express.Response) {
         let model = manageUser.parse(req.body);
 
         await db.updateUser({id: user.id, ...model});
-        emit(user.id, 'userUpdate', {data: {...model}})
+        emit(user.id, 'userUpdate', {...model});
         for (let server of user.servers) {
-            emit(server, 'serverMemberUpdate', {id: user.id, server: server, data: {...model}})
+            emit(server, 'serverMemberUpdate', {member: user.id, server: server, data: {...model}})
             return res.success(model);
         }
     }

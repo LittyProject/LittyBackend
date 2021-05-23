@@ -20,6 +20,7 @@ export const rolePerms: string[] = [
     'KICK_MEMBERS',
     'BAN_MEMBERS',
     'CREATE_INVITES',
+    'LIST_VIEW'
 ];
 
 export const perms = z.object({
@@ -114,4 +115,5 @@ export const roleEditSchema = z.object({
     name: z.string().min(1, {message: "Must be 1 or more characters long"}).max(30, {message: "Must be 30 or fewer characters long"}),
     position: z.number(),
     color: z.string(),
+    perms:  z.array(perms),
 });

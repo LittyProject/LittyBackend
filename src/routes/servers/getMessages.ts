@@ -20,7 +20,12 @@ export default async function(req: express.Request, res: express.Response) {
             if(!channel){
                 return res.notFound();
             }
-            const d = await db.getMessages(server.id, channel.id);
+            let d = [];
+            if(req.query.after){
+                d = await db.getMessages(server.id, channel.id, Number.parseInt(<string>req.query.after));
+            }else{
+                d = await db.getMessagesFirst(server.id, channel.id);
+            }
             return res.success(d);
         }
     } catch(err) {

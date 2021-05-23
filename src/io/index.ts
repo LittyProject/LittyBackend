@@ -39,15 +39,25 @@ module.exports = async (io: socket.Socket)=>{
                let servers = await db.getUserServersWithMembers(user.id);
                let userData = await f.without(user, "password token lastIP servers");
                const applications = await db.getUserApplications(user.id);
-               let friends = [];
-               for(let friend of userData.friends){
-                   let model = await f.getOnlyByZod(await db.getUser(friend), guildMemberSchema);
+               let friends: any[] = [];
+               let friendRequests: any[] = [];
+               let sendFriendRequests: any[] = [];
+               await Promise.all(userData.friends.map(async (a : string)=>{
+                   let model = await f.getOnlyByZod(await db.getUser(a), guildMemberSchema);
                    friends.push(model)
-               }
+               }));
+               await Promise.all(userData.friendRequests.map(async (a : string)=>{
+                   let model = await f.getOnlyByZod(await db.getUser(a), guildMemberSchema);
+                   friendRequests.push(model)
+               }));
+               await Promise.all(userData.sendFriendRequests.map(async (a : string)=>{
+                   let model = await f.getOnlyByZod(await db.getUser(a), guildMemberSchema);
+                   sendFriendRequests.push(model)
+               }));
                // @ts-ignore
                socket.emit("authenticated", true);
                socket.emit("setUser", userData);
-               socket.emit("setFriends", friends);
+               socket.emit("setFriends", {friends: friends, friendRequests: friendRequests,sendFriendRequests: sendFriendRequests});
                socket.emit("setServers", servers);
                socket.emit("setApplications", applications);
                try {
@@ -58,7 +68,7 @@ module.exports = async (io: socket.Socket)=>{
                        socket.join(`${a.id}`);
                        emit(a.id, 'memberUpdateStatus', {id: user.id, server: a.id, ...validatedStatus});
                    });
-                   io.to(user.id).emit('userUpdateStatus', {...validatedStatus});
+                   await emit(user.id, 'userUpdate', {...validatedStatus});
                    await db.updateUser(user);
                } catch(err) {
                    console.log(err);
@@ -128,7 +138,7 @@ module.exports = async (io: socket.Socket)=>{
                     for(let server of user.servers){
                         emit(server, 'memberUpdateStatus', {id: user.id, server: server, ...validatedStatus});
                     }
-                    io.to(user.id).emit('userUpdateStatus', {...validatedStatus});
+                    await emit(user.id, 'userUpdate', {...validatedStatus});
                     await db.updateUser(user);
                     // @ts-ignore
                 } catch(err) {
@@ -151,6 +161,14 @@ module.exports = async (io: socket.Socket)=>{
                 if(!user?.servers.includes(data.server)) return;
                 socket.join(data.server);
             }
+        });
+        socket.on("serverMessageTypingStart", async(data:any)=>{
+            if(!socket.auth||socket.type !=="BEARER") return;
+            emit(data.server,"serverMessageTypingStart", data);
+        });
+        socket.on("serverMessageTypingStop", async(data:any)=>{
+            if(!socket.auth||socket.type !=="BEARER") return;
+            emit(data.server,"serverMessageTypingStop", data);
         });
         socket.on("leave", async(data: any)=>{
             if(!socket.auth||socket.type !=="BEARER") return;
@@ -176,7 +194,7 @@ module.exports = async (io: socket.Socket)=>{
                 user.servers.map(async(server)=>{
                     await emit(server, 'memberUpdateStatus', {id: user.id, server: server, ...validatedStatus});
                 })
-                io.to(`${user.id}`).emit('userUpdateStatus', {...validatedStatus});
+                await emit(user.id, 'userUpdate', {...validatedStatus});
                 await db.updateUser(user);
             } catch(err) {
                 console.log(err);

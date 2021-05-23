@@ -50,6 +50,7 @@ export default async function(req: express.Request, res: express.Response) {
                     case "NORMAL":
                         response = await db.insertMessage(msg);
                         emit(server.id, 'serverMessageCreate', msg);
+                        emit(server.id, 'serverMessageTypingStop', {server: server.id, channel: channel.id, typer: req.user.id});
                         return res.success(response);
                     default:
                         return res.error(messages.INVALID_DATA);

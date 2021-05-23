@@ -4,19 +4,39 @@ import db from "../../db";
 import checkOnServer from "../../middlewares/checkOnServer";
 import isBannedOnServer from '../../middlewares/isBannedOnServer';
 import { messages } from '../../models/responseMessages';
+import {guildMemberSchema} from "../../models/user";
+import {SocketServer} from "../../app";
+import {emit} from "../../functions";
 
 export default async function(req: express.Request, res: express.Response) {
-    if(!req.user) return res.notAuthorized();
-    if(req.user.servers.length >= 50) return res.error(messages.TOO_MUCH_SERVERS);
+    try {
+        if(!req.params.id) return res.notFound();
+        if(!req.user) return res.notAuthorized();
 
-    if(checkOnServer(req.user, req.params.id)) return res.success();
-
-    let srv = await db.getServer(req.params.id);
-    if(!srv) return res.notFound;
-
-    if(isBannedOnServer(req.user, req.params.id)) return res.status(404).json({reason: srv.banList.filter(x => x.id == req.user?.id)[0].reason !== "" ? srv.banList.filter(x => x.id == req.user?.id)[0].reason : messages.BANNED});
-    
-    req.user.servers.push(req.params.id);
-    await db.updateUser(req.user);
-    return res.success();
+        let server: any = await db.getServerWithMembers(req.params.id);
+        if(server) {
+            if(req.user.servers.includes(server.id)){
+                return res.error("You are this server")
+            }
+            req.user.servers.push(server.id);
+            await db.updateUser({id: req.user.id, servers: req.user.servers});
+            let roles = server.roles;
+            roles.find((a : any)=> a.id===server.id).members.push(req.user.id);
+            await db.updateServer({id: server.id, roles: roles});
+            let member = await f.getOnlyByZod(req.user, guildMemberSchema);
+            await f.emit(server.id, "serverMemberJoin", {server: server.id, member: member});
+            emit(server.id, 'serverRoleUpdate', {id: server.id, data: roles.find((a : any)=> a.id===server.id)});
+            await f.emit(req.user.id, "serverCreate", server);
+            SocketServer.sockets.sockets.forEach((socket : any)=>{
+                // @ts-ignore
+                if(socket.id===req.user.id){
+                    socket.join(server.id);
+                }
+            });
+            return res.success();
+        }
+        return res.notFound();
+    } catch(err) {
+        return res.error(err);
+    }
 }

@@ -1,5 +1,6 @@
 import express from 'express';
 import {SocketServer} from "../app";
+import {defaultPerms} from "../models/server";
 const router = express.Router();
 
 router.use("/auth", require("./auth"));
@@ -14,14 +15,9 @@ router.use("", require(""));
 router.use("", require(""));
 */
 
-// router.use("/connect", async(req: express.Request, res: express.Response) => {
-//     SocketServer.sockets.sockets.forEach((socket : any)=>{
-//         if(socket.id==="a"){
-//
-//         }
-//     });
-//     res.send(SocketServer.sockets.clientsCount);
-// });
+router.get("/data/perms", async(req: express.Request, res: express.Response) => {
+    res.send(defaultPerms());
+});
 
 router.use("*", async(req: express.Request, res: express.Response) => {
     res.notFound();
