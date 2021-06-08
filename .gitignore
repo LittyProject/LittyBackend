@@ -1,6 +1,6 @@
 node_modules/
 build/
-cdn/
+src/cdn/
 src-idk/
 .env
 

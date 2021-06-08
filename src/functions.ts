@@ -33,6 +33,17 @@ export function emitAll(event: string, data: any){
     });
 }
 
+export function formatSize(x: number){
+    const units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    let l = 0, n = parseInt(String(x), 10) || 0;
+
+    while(n >= 1024 && ++l){
+        n = n/1024;
+    }
+    return {size: Number(n.toFixed(n < 10 && l > 0 ? 1 : 0)), type: units[l]};
+}
+
 export async function hashPassword(string: string): Promise<string> {
     return new Promise<string>((res, rej) => {
         bcrypt.genSalt(10, async function(err, salt) {

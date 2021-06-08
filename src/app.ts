@@ -5,6 +5,7 @@ import cors from 'cors';
 import db from "./db";
 const methodOverride = require("method-override");
 const app = express();
+import fileUpload = require('express-fileupload');
 db.conn();
 
 const config = require('../config.json');
@@ -24,7 +25,12 @@ app.use((req, res, next)=>{
 app.use(express.urlencoded({extended: true}))
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+
+app.use(`/cdn/${config.cdn.user.avatar.path}`, express.static(`${__dirname}/cdn/${config.cdn.user.avatar.path}`));
+app.use(`/cdn/${config.cdn.server.icon.path}`, express.static(`${__dirname}/cdn/${config.cdn.server.icon.path}`));
+app.use(`/cdn/${config.cdn.server.banner.path}`, express.static(`${__dirname}/cdn/${config.cdn.server.banner.path}`));
+app.use(fileUpload());
 
 app.use("/api/", require("./routes/index"));
 app.use("/", require("./routes/index"));

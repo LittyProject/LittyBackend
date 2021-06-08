@@ -14,6 +14,7 @@ import rejectFriend from "./rejectFriend";
 import approveFriend from "./approveFriend";
 import addFriend from "./addFriend";
 import friendRemove from "./friendRemove";
+import uploadAvatar from "./uploadAvatar";
 const router = express.Router();
 
 router.use('/:id', rateLimits(20, 100));
@@ -21,6 +22,9 @@ router.route("/:id").get(checkAuth, getUser).delete(checkAuth, deleteUser).put(c
 
 router.use('/:id/friends', rateLimits(20, 100));
 router.route("/:id/friends").get(checkAuth, getFriends);
+
+router.use('/:id/avatar', rateLimits(60*10, 1));
+router.route("/:id/avatar").post(checkAuth, uploadAvatar);
 
 router.use('/:id/friends/pending', rateLimits(20, 100));
 router.route("/:id/friends/pending").get(checkAuth, getFriendRequests);

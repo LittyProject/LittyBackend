@@ -12,7 +12,7 @@ export default async function(req: express.Request, res: express.Response) {
     try {
         if(!req.params.id) return res.notFound();
         if(!req.user) return res.notAuthorized();
-
+        if(req.user.servers.length >= 50) return res.error(messages.TOO_MUCH_SERVERS);
         let server: any = await db.getServerWithMembers(req.params.id);
         if(server) {
             if(req.user.servers.includes(server.id)){
