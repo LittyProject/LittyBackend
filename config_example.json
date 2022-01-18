@@ -1,0 +1,23 @@
+{
+  "cors": [
+    "http://localhost:1920"
+  ],
+  "cdn": {
+    "imageExtensions": [
+      "png"
+    ],
+    "user": {
+      "avatar": {
+        "path": "path/to/user/avatar"
+      }
+    },
+    "server": {
+      "icon": {
+        "path": "path/to/server/icon"
+      },
+      "banner": {
+        "path": "path/to/server/banner"
+      }
+    }
+  }
+}

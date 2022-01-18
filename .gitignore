@@ -1,0 +1,10 @@
+node_modules/
+build/
+src/cdn/
+src-idk/
+.env
+.idea
+yarn.lock
+package-lock.json
+config.json
+firebase.json
